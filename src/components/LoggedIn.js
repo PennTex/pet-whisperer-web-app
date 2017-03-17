@@ -7,7 +7,7 @@ import request from 'request';
 export default class LoggedIn extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
       profile: null,
       pets: null
@@ -30,28 +30,31 @@ export default class LoggedIn extends React.Component {
       }
       this.setState({ profile: profile });
     }.bind(this));
-    
-    request.get('http://localhost:8080/pets', {  
+
+    request.get('http://localhost:8080/pets', {
       headers: {
         'Authorization': `Bearer ${this.props.idToken}`
       }
-    }, function (err, res, body) {
-      if(err) {
+    }, (err, res, body) => {
+      console.log('pets', body);
+
+      if (err) {
         console.log('error', err);
       } else {
-        console.log('res', res);
-        console.log('body', body);
+        this.setState({
+          pets: JSON.parse(body),
+        });
       }
     })
   }
 
-  render() {    
+  render() {
     if (this.state.profile) {
       let pets = '';
 
-      if (this.state.profile.pets) {
+      if (this.state.pets) {
         console.log(this.state.profile.pets);
-        pets = this.state.profile.pets.map(function (pet, i) {
+        pets = this.state.pets.map(function (pet, i) {
           return <Pet key={i} pet={pet} />
         })
       }
@@ -59,13 +62,14 @@ export default class LoggedIn extends React.Component {
       return (
         <div className="col-lg-12">
           <span className="pull-right">{this.state.profile.nickname} <a href="#" onClick={this.logout.bind(this)}>Log out</a></span>
-          <h2>Welcome to Pet Whisperer</h2>
-          <p>Below you'll find all your pets, cool.</p>
+          <h1>Welcome to Pet Whisperer</h1>
+
           <div className="row">
             {pets}
           </div>
 
-          <CreatePet idToken={this.props.idToken}/>
+          <h2>Add New Pet</h2>
+          <CreatePet idToken={this.props.idToken} />
         </div>);
     } else {
       return (<div>Loading...</div>);

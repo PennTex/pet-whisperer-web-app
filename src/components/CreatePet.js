@@ -8,7 +8,7 @@ export default class CreatePet extends React.Component {
       type: 'dog',
       name: 'Mr. Cuddle Butts',
       birthday: '2016-07-12',
-      image_url: 'https://cdn.pixabay.com/photo/2016/02/19/15/46/dog-1210559_1280.jpg'
+      image_url: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTp19-VD0XBvB4nYN-goPcjAlGxb5M7PPZVvonuCUlqTEq8I5NtyA'
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
