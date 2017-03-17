@@ -1,6 +1,8 @@
 import React from 'react';
 import * as config from '../config';
 import Pet from './Pet';
+import CreatePet from './CreatePet';
+import request from 'request';
 
 export default class LoggedIn extends React.Component {
   constructor(props) {
@@ -17,7 +19,7 @@ export default class LoggedIn extends React.Component {
     localStorage.removeItem('userToken');
     this.props.lock.logout({
       client_id: config.AUTH0_CLIENT_ID,
-      returnTo: 'http://localhost:8080'
+      returnTo: 'http://localhost:5000'
     })
   }
 
@@ -28,13 +30,19 @@ export default class LoggedIn extends React.Component {
       }
       this.setState({ profile: profile });
     }.bind(this));
-
-    this.serverRequest = $.get(config.PET_WHISPERER_API_BASE + '/pets', function (result) {
-      console.log(result)
-      this.setState({
-        pets: result,
-      });
-    }.bind(this));
+    
+    request.get('http://localhost:8080/pets', {  
+      headers: {
+        'Authorization': `Bearer ${this.props.idToken}`
+      }
+    }, function (err, res, body) {
+      if(err) {
+        console.log('error', err);
+      } else {
+        console.log('res', res);
+        console.log('body', body);
+      }
+    })
   }
 
   render() {    
@@ -56,6 +64,8 @@ export default class LoggedIn extends React.Component {
           <div className="row">
             {pets}
           </div>
+
+          <CreatePet idToken={this.props.idToken}/>
         </div>);
     } else {
       return (<div>Loading...</div>);

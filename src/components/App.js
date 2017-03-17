@@ -32,12 +32,13 @@ export default class App extends React.Component {
       if (authHash.id_token) {
         idToken = authHash.id_token
         localStorage.setItem('userToken', authHash.id_token);
-        window.location.replace("http://localhost:8080");
+        window.location.replace("http://localhost:5000");
       }
       if (authHash.error) {
         console.log("Error signing in", authHash);
       }
     }
+
     return idToken;
   }
 
