@@ -1,10 +1,10 @@
 import React from 'react';
-import * as config from '../config';
 import Pet from './Pet';
 import CreatePet from './CreatePet';
 import request from 'request';
 import { connect } from 'react-redux';
 import store from '../store';
+import Nav from './Nav';
 
 export class LoggedIn extends React.Component {
   constructor(props) {
@@ -16,20 +16,15 @@ export class LoggedIn extends React.Component {
     }
   }
 
-  logout() {
-    localStorage.removeItem('userToken');
-    this.props.lock.logout({
-      client_id: config.AUTH0_CLIENT_ID,
-      returnTo: 'http://localhost:5000'
-    })
-  }
-
   componentDidMount() {
     this.props.lock.getProfile(this.props.idToken, function (err, profile) {
       if (err) {
         console.log("Error loading the Profile", err);
       }
-      this.setState({ profile: profile });
+      store.dispatch({
+        type: 'PROFILE_GET_SUCCESS',
+        profile: profile
+      });
     }.bind(this));
 
     request.get('http://localhost:8080/pets', {
@@ -50,7 +45,7 @@ export class LoggedIn extends React.Component {
   }
 
   render() {
-    if (this.state.profile) {
+    if (this.props.profile) {
       let pets = '';
 
       if (this.props.pets) {
@@ -60,16 +55,16 @@ export class LoggedIn extends React.Component {
       }
 
       return (
-        <div className="col-lg-12">
-          <span className="pull-right">{this.state.profile.nickname} <a href="#" onClick={this.logout.bind(this)}>Log out</a></span>
-          <h1>Welcome to Pet Whisperer</h1>
+        <div>
+          <Nav lock={this.props.lock}></Nav>
+          <div className="col-lg-12">
+            <div className="row">
+              {pets}
+            </div>
 
-          <div className="row">
-            {pets}
+            <h2>Add New Pet</h2>
+            <CreatePet idToken={this.props.idToken} />
           </div>
-
-          <h2>Add New Pet</h2>
-          <CreatePet idToken={this.props.idToken} />
         </div>);
     } else {
       return (<div>Loading...</div>);
@@ -79,6 +74,7 @@ export class LoggedIn extends React.Component {
 
 export default connect(
   (store) => ({
-    pets: store.petsState
+    pets: store.petsState,
+    profile: store.profileState
   })
 )(LoggedIn)

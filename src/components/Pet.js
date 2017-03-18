@@ -36,7 +36,6 @@ export default class Pet extends React.Component {
             <h3>{this.props.pet.name}</h3>
             <p>Cool {this.props.pet.type} dude</p>
             <p>
-              <a href="#" className="btn btn-primary" role="button">Edit</a>
               <a href="#" className="btn btn-danger" role="button" onClick={this.handleDelete.bind(this)}>Delete</a>
             </p>
           </div>

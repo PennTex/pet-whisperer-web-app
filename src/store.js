@@ -16,8 +16,20 @@ const petsReducer = function (state = initialPetsState, action) {
   return state;
 }
 
+const initialProfileState = {};
+const profileReducer = function (state = initialPetsState, action) {
+  switch (action.type) {
+    case 'PROFILE_GET_SUCCESS':
+      return Object.assign({}, state, action.profile);
+
+  }
+
+  return state;
+}
+
 const reducers = combineReducers({
-  petsState: petsReducer
+  petsState: petsReducer,
+  profileState: profileReducer
 });
 
 export default createStore(reducers);
