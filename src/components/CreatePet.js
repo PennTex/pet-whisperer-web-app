@@ -1,12 +1,14 @@
 import React from 'react';
 import request from 'request';
+import { connect } from 'react-redux';
+import store from '../store';
 
-export default class CreatePet extends React.Component {
+export class CreatePet extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       type: 'dog',
-      name: 'Mr. Cuddle Butts',
+      name: 'Mr. Cuddlebutts',
       birthday: '2016-07-12',
       image_url: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTp19-VD0XBvB4nYN-goPcjAlGxb5M7PPZVvonuCUlqTEq8I5NtyA'
     };
@@ -28,7 +30,7 @@ export default class CreatePet extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    request.post('http://localhost:8080/pets', {  
+    request.post('http://localhost:8080/pets', {
       headers: {
         'Authorization': `Bearer ${this.props.idToken}`
       },
@@ -40,11 +42,16 @@ export default class CreatePet extends React.Component {
       },
       json: true
     }, function (err, res, body) {
-      if(err) {
+      if (err) {
         console.log('error', err);
       } else {
         console.log('res', res);
         console.log('body', body);
+
+        store.dispatch({
+          type: 'ADD_PET_SUCCESS',
+          pet: body
+        });
       }
     })
   }
@@ -84,3 +91,7 @@ export default class CreatePet extends React.Component {
       </form>);
   }
 }
+
+export default connect(
+  (state) => ({})
+)(CreatePet)

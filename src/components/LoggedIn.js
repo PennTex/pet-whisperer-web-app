@@ -3,8 +3,10 @@ import * as config from '../config';
 import Pet from './Pet';
 import CreatePet from './CreatePet';
 import request from 'request';
+import { connect } from 'react-redux';
+import store from '../store';
 
-export default class LoggedIn extends React.Component {
+export class LoggedIn extends React.Component {
   constructor(props) {
     super(props);
 
@@ -15,7 +17,6 @@ export default class LoggedIn extends React.Component {
   }
 
   logout() {
-    console.log(this.props);
     localStorage.removeItem('userToken');
     this.props.lock.logout({
       client_id: config.AUTH0_CLIENT_ID,
@@ -34,15 +35,15 @@ export default class LoggedIn extends React.Component {
     request.get('http://localhost:8080/pets', {
       headers: {
         'Authorization': `Bearer ${this.props.idToken}`
-      }
+      },
+      json: true
     }, (err, res, body) => {
-      console.log('pets', body);
-
       if (err) {
         console.log('error', err);
       } else {
-        this.setState({
-          pets: JSON.parse(body),
+        store.dispatch({
+          type: 'PET_LIST_SUCCESS',
+          pets: body
         });
       }
     })
@@ -52,10 +53,9 @@ export default class LoggedIn extends React.Component {
     if (this.state.profile) {
       let pets = '';
 
-      if (this.state.pets) {
-        console.log(this.state.profile.pets);
-        pets = this.state.pets.map(function (pet, i) {
-          return <Pet key={i} pet={pet} />
+      if (this.props.pets) {
+        pets = this.props.pets.map((pet, i) => {
+          return <Pet key={i} pet={pet} idToken={this.props.idToken} />
         })
       }
 
@@ -76,3 +76,9 @@ export default class LoggedIn extends React.Component {
     }
   }
 }
+
+export default connect(
+  (store) => ({
+    pets: store.petsState
+  })
+)(LoggedIn)
