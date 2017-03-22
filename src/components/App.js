@@ -1,52 +1,53 @@
 import React from 'react';
-import Home from './Home';
-import LoggedIn from './LoggedIn';
+import Login from './Login';
+import Dashboard from './Dashboard';
+import { connect } from 'react-redux';
+import store from '../store';
+import * as config from '../config';
 
-export default class App extends React.Component {
+export class App extends React.Component {
   componentWillMount() {
-    this.setupAjax();
     this.createLock();
-    this.setState({idToken: this.getIdToken()})
+    this.getIdToken();
   }
 
   createLock() {
-    this.lock = new Auth0Lock(this.props.clientId, this.props.domain);
-  }
-
-  setupAjax() {
-    $.ajaxSetup({
-      'beforeSend': function(xhr) {
-        if (localStorage.getItem('userToken')) {
-          xhr.setRequestHeader('Authorization',
-                'Bearer ' + localStorage.getItem('userToken'));
-        }
-      }
-    });
+    this.lock = new Auth0Lock(config.AUTH0_CLIENT_ID, config.AUTH0_DOMAIN);
   }
 
   getIdToken() {
     var idToken = localStorage.getItem('userToken');
     var authHash = this.lock.parseHash(window.location.hash);
-    
+
     if (!idToken && authHash) {
       if (authHash.id_token) {
         idToken = authHash.id_token
         localStorage.setItem('userToken', authHash.id_token);
-        window.location.replace("http://localhost:5000");
       }
+
       if (authHash.error) {
         console.log("Error signing in", authHash);
       }
     }
 
-    return idToken;
+    store.dispatch({
+      type: 'ID_TOKEN_SUCCESS',
+      idToken: idToken
+    });
   }
 
   render() {
-    if (this.state.idToken) {
-      return (<LoggedIn lock={this.lock} idToken={this.state.idToken} />);
+    if (this.props.idToken) {
+      this.lock.hide();
+      return (<Dashboard lock={this.lock} />);
     } else {
-      return (<Home lock={this.lock} />);
+      return (<Login lock={this.lock} />);
     }
   }
 }
+
+export default connect(
+  (store) => ({
+    idToken: store.idTokenState
+  })
+)(App)
