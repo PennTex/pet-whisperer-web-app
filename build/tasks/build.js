@@ -16,7 +16,9 @@ gulp.task('build:transform', function (done) {
     .transform(envify({
       APP_ENV: process.env.APP_ENV
     }))
-    .transform(babelify, { presets: ["es2015", "react"] })
+    .transform(babelify, { 
+      presets: ["es2015", "react"]
+    })
     .bundle()
     .pipe(source('all.js'))
     .pipe(gulp.dest(paths.output))

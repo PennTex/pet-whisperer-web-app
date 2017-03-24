@@ -1,10 +1,13 @@
-var env = process.env.APP_ENV || 'development';
-
-console.log('Environment: ', env);
+import * as base from './base';
+import * as development from './development';
+import * as production from './production';
 
 var config = {
-  development: require('./development.js'),
-  production: require('./production.js')
+  development,
+  production
 };
 
-module.exports = config[env];
+var env = process.env.APP_ENV || 'development';
+console.log('Environment: ', env);
+
+module.exports = Object.assign({}, base, config[env]);
