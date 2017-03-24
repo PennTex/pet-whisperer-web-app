@@ -8,7 +8,10 @@ import * as config from '../config';
 export class App extends React.Component {
   componentWillMount() {
     this.createLock();
-    this.getIdToken();
+
+    this.state = {
+      idToken: this.getIdToken()
+    };
   }
 
   createLock() {
@@ -32,11 +35,12 @@ export class App extends React.Component {
 
     this.props.setIdToken(idToken);
     window.history.replaceState(null, null, window.location.pathname);
+
+    return idToken;
   }
 
   render() {
-    if (this.props.idToken) {
-      this.lock.hide();
+    if (this.state.idToken) {
       return (<Dashboard lock={this.lock} />);
     } else {
       return (<Login lock={this.lock} />);
