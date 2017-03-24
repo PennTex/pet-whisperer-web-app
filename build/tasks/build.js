@@ -9,12 +9,12 @@ const babelify = require('babelify');
 const concat = require('gulp-concat');
 const sourcemaps = require('gulp-sourcemaps');
 const	runSequence = require('run-sequence');
-
+const envify = require('envify/custom');
 
 gulp.task('build:transform', function (done) {
   return browserify(paths.app)
     .transform(envify({
-      NODE_ENV: 'development'
+      NODE_ENV: process.env.NODE_ENV
     }))
     .transform(babelify, { presets: ["es2015", "react"] })
     .bundle()
