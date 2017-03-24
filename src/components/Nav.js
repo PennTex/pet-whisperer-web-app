@@ -5,7 +5,7 @@ import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 
 export class Nav extends React.Component {
-  logout() {
+  _logout() {
     localStorage.removeItem('userToken');
     this.props.lock.logout({
       client_id: config.AUTH0_CLIENT_ID,
@@ -18,14 +18,9 @@ export class Nav extends React.Component {
       <AppBar
         title="Pet Whisperer"
         showMenuIconButton={false}
-        iconElementRight={<FlatButton label="Log out" onClick={this.logout.bind(this)} />}
+        iconElementRight={<FlatButton label="Log out" onClick={this._logout.bind(this)} />}
       />)
   }
 }
 
-export default connect(
-  (store) => ({
-    pets: store.petsState,
-    profile: store.profileState
-  })
-)(Nav)
+export default connect()(Nav)

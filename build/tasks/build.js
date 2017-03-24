@@ -13,6 +13,9 @@ const	runSequence = require('run-sequence');
 
 gulp.task('build:transform', function (done) {
   return browserify(paths.app)
+    .transform(envify({
+      NODE_ENV: 'development'
+    }))
     .transform(babelify, { presets: ["es2015", "react"] })
     .bundle()
     .pipe(source('all.js'))

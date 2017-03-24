@@ -8,39 +8,39 @@ import FlatButton from 'material-ui/FlatButton';
 import PetsService from '../services/PetsService';
 import * as actions from '../actions';
 
-export default class Pet extends React.Component {
+export class Pet extends React.Component {
   constructor(props) {
     super(props);
 
-    this.petsService = new PetsService({ idToken: this.props.idToken });
+    this.petsService = new PetsService({ idToken: props.idToken });
 
     this.state = {
       expanded: false,
     };
   }
 
-  handleDelete() {
+  _handleDelete() {
     event.preventDefault();
 
     this.petsService.deletePet(this.props.pet.id)
       .then(() => {
-        store.dispatch(actions.deletePetSuccess(this.props.pet.id));
+        this.props.onDeleteSuccess(this.props.pet.id);
       });
   }
 
-  handleExpandChange(expanded) {
+  _handleExpandChange(expanded) {
     this.setState({ expanded: expanded });
   };
 
-  handleToggle(event, toggle) {
+  _handleToggle(event, toggle) {
     this.setState({ expanded: toggle });
   };
 
-  handleExpand() {
+  _handleExpand() {
     this.setState({ expanded: true });
   };
 
-  handleReduce() {
+  _handleReduce() {
     this.setState({ expanded: false });
   };
 
@@ -50,7 +50,7 @@ export default class Pet extends React.Component {
     };
 
     return (
-      <Card expanded={this.state.expanded} onExpandChange={this.handleExpandChange.bind(this)}>
+      <Card expanded={this.state.expanded} onExpandChange={this._handleExpandChange.bind(this)}>
         <CardHeader
           title={this.props.pet.name}
           subtitle={this.props.pet.type}
@@ -72,11 +72,20 @@ export default class Pet extends React.Component {
           Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
         </CardText>
         <CardActions>
-          <FlatButton label="Feed" onTouchTap={this.handleExpand.bind(this)} />
-          <FlatButton label="Medication" onTouchTap={this.handleReduce.bind(this)} />
-          <FlatButton label="Delete" onTouchTap={this.handleDelete.bind(this)} />
+          <FlatButton label="Feed" onTouchTap={this._handleExpand.bind(this)} />
+          <FlatButton label="Medication" onTouchTap={this._handleReduce.bind(this)} />
+          <FlatButton label="Delete" onTouchTap={this._handleDelete.bind(this)} />
         </CardActions>
       </Card>
     );
   }
 }
+
+export default connect(
+  null, 
+  (dispatch) => ({
+    onDeleteSuccess: (petID) => dispatch(
+      actions.deletePetSuccess(petID)
+    )
+  })
+)(Pet)

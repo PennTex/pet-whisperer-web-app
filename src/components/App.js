@@ -30,10 +30,7 @@ export class App extends React.Component {
       }
     }
 
-    store.dispatch({
-      type: 'ID_TOKEN_SUCCESS',
-      idToken: idToken
-    });
+    this.props.setIdToken(idToken);
   }
 
   render() {
@@ -47,7 +44,13 @@ export class App extends React.Component {
 }
 
 export default connect(
-  (store) => ({
+  store => ({
     idToken: store.idTokenState
+  }),
+  dispatch => ({
+    setIdToken: (idToken) => dispatch({
+      type: 'ID_TOKEN_SUCCESS',
+      idToken: idToken
+    })
   })
 )(App)

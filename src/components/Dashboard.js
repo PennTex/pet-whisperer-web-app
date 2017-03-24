@@ -14,11 +14,9 @@ export class Dashboard extends React.Component {
   constructor(props) {
     super(props);
 
-    this.petsService = new PetsService({idToken: this.props.idToken});
+    this.petsService = new PetsService({idToken: props.idToken});
 
     this.state = {
-      profile: null,
-      pets: null,
       createPetModalOpen: false
     }
   }
@@ -65,7 +63,7 @@ export class Dashboard extends React.Component {
 
       if (this.props.pets.length > 0) {
         petsDisplay = this.props.pets.map((pet, i) => {
-          return <div><Pet key={i} pet={pet} idToken={this.props.idToken} /> <br /></div>
+          return <div key={pet.id}><Pet key={pet.id} pet={pet} idToken={this.props.idToken} /> <br /></div>
         })
       } else {
         petsDisplay = (<h2 style={{ textAlign: "center" }}>Add some pets!</h2>)
