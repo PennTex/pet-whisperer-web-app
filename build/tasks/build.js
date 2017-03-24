@@ -14,7 +14,7 @@ const envify = require('envify/custom');
 gulp.task('build:transform', function (done) {
   return browserify(paths.app)
     .transform(envify({
-      NODE_ENV: process.env.NODE_ENV
+      APP_ENV: process.env.APP_ENV
     }))
     .transform(babelify, { presets: ["es2015", "react"] })
     .bundle()
