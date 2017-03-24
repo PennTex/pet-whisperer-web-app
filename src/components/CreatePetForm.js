@@ -59,7 +59,6 @@ export class CreatePetForm extends React.Component {
     console.log('Rejected files: ', rejectedFiles);
   }
 
-
   render() {
     const styles = {
       block: {
