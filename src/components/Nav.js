@@ -9,7 +9,7 @@ export class Nav extends React.Component {
     localStorage.removeItem('userToken');
     this.props.lock.logout({
       client_id: config.AUTH0_CLIENT_ID,
-      returnTo: 'http://localhost:5000'
+      returnTo: config.AUTH0_CALLBACK_URL
     })
   }
 
