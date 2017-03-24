@@ -7,6 +7,7 @@ import FlatButton from 'material-ui/FlatButton';
 export class Nav extends React.Component {
   _logout() {
     localStorage.removeItem('userToken');
+    
     this.props.lock.logout({
       client_id: config.AUTH0_CLIENT_ID,
       returnTo: config.AUTH0_CALLBACK_URL

@@ -31,6 +31,7 @@ export class App extends React.Component {
     }
 
     this.props.setIdToken(idToken);
+    window.history.replaceState(null, null, window.location.pathname);
   }
 
   render() {
