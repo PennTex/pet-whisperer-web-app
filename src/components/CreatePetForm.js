@@ -14,37 +14,16 @@ export class CreatePetForm extends React.Component {
     super(props);
 
     this.petsService = new PetsService({ idToken: this.props.idToken });
-
-    this.state = {
-      type: 'dog',
-      name: 'Mr. Cuddlebutts',
-      birthday: '2016-07-12',
-      image_url: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTp19-VD0XBvB4nYN-goPcjAlGxb5M7PPZVvonuCUlqTEq8I5NtyA'
-    };
-
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleInputChange(event) {
-    const target = event.target;
-    console.log(target.type);
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
-
-    this.setState({
-      [name]: value
-    });
-  }
-
-  handleSubmit(event) {
+  _submit(event) {
     event.preventDefault();
 
     this.petsService.createPet({
-      type: this.state.type,
-      name: this.state.name,
-      birthday: this.state.birthday,
-      image_url: this.state.image_url
+      type: this.type.getSelectedValue(),
+      name: this.name.getValue(),
+      birthday: this.birthday.getValue(),
+      image_url: this.image_url.getValue()
     }).then((pet) => {
       store.dispatch(actions.addPetSuccess(pet));
 
@@ -81,23 +60,23 @@ export class CreatePetForm extends React.Component {
           <div>Try dropping some files here, or click to select files to upload.</div>
         </Dropzone>*/
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={this._submit.bind(this)}>
         <TextField
           floatingLabelText="Name"
-          id="name" name="name" value={this.state.name} onChange={this.handleInputChange}
+          id="name" name="name" ref={(input) => { this.name = input; }}
         />
         <br />
         <TextField
           floatingLabelText="Birthday"
-          type="date" id="birthday" name="birthday" value={this.state.birthday} onChange={this.handleInputChange}
+          type="date" id="birthday" name="birthday" ref={(input) => { this.birthday = input; }}
         />
         <br />
         <TextField
           floatingLabelText="Picture"
-          type="url" id="image_url" name="image_url" value={this.state.image_url} onChange={this.handleInputChange}
+          type="url" id="image_url" name="image_url" ref={(input) => { this.image_url = input; }}
         />
         <br />
-        <RadioButtonGroup id="type" name="type" defaultSelected="not_light" value={this.state.type} onChange={this.handleInputChange}>
+        <RadioButtonGroup id="type" name="type" defaultSelected="not_light" ref={(radio) => { this.type = radio; }}>
           <RadioButton
             value="dog"
             label="dog"

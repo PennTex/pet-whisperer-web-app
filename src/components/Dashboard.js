@@ -31,7 +31,9 @@ export class Dashboard extends React.Component {
 
     this.petsService.getPets()
       .then(pets => {
-        store.dispatch(actions.getPetsSuccess(pets));
+        if (pets){
+          store.dispatch(actions.getPetsSuccess(pets));
+        }
       });
   }
 
