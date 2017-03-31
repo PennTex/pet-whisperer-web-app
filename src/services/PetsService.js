@@ -1,5 +1,6 @@
 import rp from 'request-promise';
 import * as config from '../config';
+import Promise from 'bluebird';
 
 export default class PetsService {
   constructor(params) {
@@ -40,8 +41,50 @@ export default class PetsService {
         'Authorization': `Bearer ${this.idToken}`
       },
       json: true
-    }
+    };
 
     return rp(options);
+  }
+
+  imageInfo(file) {
+    return new Promise((resolve, reject) => {
+      const api_key = 'AIzaSyBO_P6lhW5xZbwqfgTZlpC9aKAiN-HeNKQ';
+      var reader = new window.FileReader()
+
+      reader.onloadend = (e) => {
+        const options = {
+          method: 'POST',
+          uri: `https://vision.googleapis.com/v1/images:annotate?key=${api_key}`,
+          json: true,
+          body: {
+            requests: [
+              {
+                image: {
+                  content: e.target.result.replace("data:image/jpeg;base64,", "")
+                },
+                features: [
+                  {
+                    type: 'LABEL_DETECTION'
+                  }
+                ]
+              }
+            ]
+          }
+        }
+
+        rp(options)
+          .then(data => {
+            resolve(data.responses[0].labelAnnotations);
+          }).catch(err => {
+            reject(err)
+          });
+      }
+
+      reader.onerror = (err) => {
+        reject(err);
+      }
+
+      reader.readAsDataURL(file);
+    });
   }
 }

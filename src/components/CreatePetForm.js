@@ -14,6 +14,10 @@ export class CreatePetForm extends React.Component {
     super(props);
 
     this.petsService = new PetsService({ idToken: this.props.idToken });
+
+    this.state = {
+      files: []
+    }
   }
 
   _submit(event) {
@@ -34,8 +38,14 @@ export class CreatePetForm extends React.Component {
   }
 
   onDrop(acceptedFiles, rejectedFiles) {
-    console.log('Accepted files: ', acceptedFiles);
-    console.log('Rejected files: ', rejectedFiles);
+    this.setState({
+      files: acceptedFiles
+    });
+
+    this.petsService.imageInfo(acceptedFiles[0])
+      .then((data) => {
+        console.log('upload data: ', JSON.stringify(data, null, 4));
+      })
   }
 
   render() {
@@ -48,19 +58,31 @@ export class CreatePetForm extends React.Component {
       },
       dropzone: {
         flex: 1,
-        minHeight: 200,
+        margin: 20,
+        maxWidth: 150,
+        minHeight: 150,
         borderWidth: 2,
         borderColor: "rgb(102, 102, 102)",
         borderStyle: "dashed",
         borderRadius: 5
       }
     };
-    /*
-          <Dropzone onDrop={this.onDrop} style={styles.dropzone}>
-          <div>Try dropping some files here, or click to select files to upload.</div>
-        </Dropzone>*/
+
+    let dropzoneInnerContent = <div>Try dropping some files here, or click to select files to upload.</div>;
+
+    if(this.state.files && this.state.files.length > 0) {
+      dropzoneInnerContent = this.state.files.map(
+        (file, i) => 
+          <img src={file.preview} width="120" key={i} /> 
+      )
+    }
+
     return (
       <form onSubmit={this._submit.bind(this)}>
+        <Dropzone onDrop={this.onDrop.bind(this)} style={styles.dropzone} multiple={false}>
+          <div>{dropzoneInnerContent}</div>
+        </Dropzone>
+
         <TextField
           floatingLabelText="Name"
           id="name" name="name" ref={(input) => { this.name = input; }}

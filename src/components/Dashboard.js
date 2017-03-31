@@ -97,6 +97,7 @@ export class Dashboard extends React.Component {
               modal={false}
               open={this.state.createPetModalOpen}
               onRequestClose={this.closeCreatePetModal.bind(this)}
+              autoScrollBodyContent={true}
             >
               <CreatePetForm afterCreateSuccess={this.closeCreatePetModal.bind(this)}/>
             </Dialog>
