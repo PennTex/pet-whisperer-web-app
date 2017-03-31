@@ -16,7 +16,8 @@ export class CreatePetForm extends React.Component {
     this.petsService = new PetsService({ idToken: this.props.idToken });
 
     this.state = {
-      files: []
+      files: [],
+      petInfoByImage: null
     }
   }
 
@@ -26,7 +27,7 @@ export class CreatePetForm extends React.Component {
     this.petsService.createPet({
       type: this.type.getSelectedValue(),
       name: this.name.getValue(),
-      birthday: this.birthday.getValue(),
+      birthday: this.birthday.getDate(),
       image_url: this.image_url.getValue()
     }).then((pet) => {
       store.dispatch(actions.addPetSuccess(pet));
@@ -37,16 +38,35 @@ export class CreatePetForm extends React.Component {
     })
   }
 
-  onDrop(acceptedFiles, rejectedFiles) {
+  _onDrop(acceptedFiles, rejectedFiles) {
+    if(rejectedFiles.length > 0) {
+      store.dispatch(actions.showNotification('Image rejected. Must be <100K in size.'))
+      return;
+    }
+
     this.setState({
-      files: acceptedFiles
+      files: acceptedFiles,
+      petInfoByImage: 'Analyzing your pet...'
     });
 
     this.petsService.imageInfo(acceptedFiles[0])
       .then((data) => {
         data.forEach(item => {
-          if (item.description === "dog"){
-            store.dispatch(actions.showNotification('We determined the pet you uploaded was a dog!'));
+          if (item.description === "dog") {
+            this.setState({
+              petInfoByImage: 'Looks like a dog! We prefilled some form data for you.'
+            });
+            this.type.setSelectedValue('dog');
+          } else if (item.description === "cat") {
+            this.setState({
+              petInfoByImage: 'Looks like a cat! We prefilled some form data for you.'
+            });
+            this.type.setSelectedValue('cat');
+          } else if (item.description === "bird") {
+            this.setState({
+              petInfoByImage: 'Looks like a bird! We prefilled some form data for you.'
+            });
+            this.type.setSelectedValue('bird');
           }
         });
         console.log('upload data: ', JSON.stringify(data, null, 4));
@@ -75,33 +95,26 @@ export class CreatePetForm extends React.Component {
 
     let dropzoneInnerContent = <div>Try dropping some files here, or click to select files to upload.</div>;
 
-    if(this.state.files && this.state.files.length > 0) {
+    if (this.state.files && this.state.files.length > 0) {
       dropzoneInnerContent = this.state.files.map(
-        (file, i) => 
-          <img src={file.preview} width="120" key={i} /> 
+        (file, i) =>
+          <img src={file.preview} width="160" key={i} />
       )
     }
 
     return (
       <form onSubmit={this._submit.bind(this)}>
-        <Dropzone onDrop={this.onDrop.bind(this)} style={styles.dropzone} multiple={false}>
+        <Dropzone name="image_url" maxSize={100000} onDrop={this._onDrop.bind(this)} style={styles.dropzone} multiple={false} >
           <div>{dropzoneInnerContent}</div>
         </Dropzone>
-
+        {this.state.petInfoByImage}
+        <br />
         <TextField
           floatingLabelText="Name"
           id="name" name="name" ref={(input) => { this.name = input; }}
         />
         <br />
-        <TextField
-          floatingLabelText="Birthday"
-          type="date" id="birthday" name="birthday" ref={(input) => { this.birthday = input; }}
-        />
-        <br />
-        <TextField
-          floatingLabelText="Picture"
-          type="url" id="image_url" name="image_url" ref={(input) => { this.image_url = input; }}
-        />
+        <DatePicker id="birthday" name="birthday" floatingLabelText="Birthday" ref={(datePicker) => { this.birthday = datePicker; }} />
         <br />
         <RadioButtonGroup id="type" name="type" defaultSelected="not_light" ref={(radio) => { this.type = radio; }}>
           <RadioButton
