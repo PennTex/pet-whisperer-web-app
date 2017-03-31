@@ -25,3 +25,16 @@ export function getProfileSuccess(profile) {
     profile 
   };
 }
+
+export function showNotification(message) {
+  return {
+    type: 'SHOW',
+    message
+  }
+}
+
+export function hideNotification() {
+  return {
+    type: 'HIDE'
+  }
+}

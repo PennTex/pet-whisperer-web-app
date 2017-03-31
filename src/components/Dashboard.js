@@ -9,6 +9,7 @@ import Dialog from 'material-ui/Dialog';
 import CreatePetForm from './CreatePetForm';
 import PetsService from '../services/PetsService';
 import * as actions from '../actions';
+import Notification from './Notification';
 
 export class Dashboard extends React.Component {
   constructor(props) {
@@ -101,6 +102,8 @@ export class Dashboard extends React.Component {
             >
               <CreatePetForm afterCreateSuccess={this.closeCreatePetModal.bind(this)}/>
             </Dialog>
+
+            <Notification />
           </div>
         </div>);
     } else {

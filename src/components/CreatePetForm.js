@@ -44,6 +44,11 @@ export class CreatePetForm extends React.Component {
 
     this.petsService.imageInfo(acceptedFiles[0])
       .then((data) => {
+        data.forEach(item => {
+          if (item.description === "dog"){
+            store.dispatch(actions.showNotification('We determined the pet you uploaded was a dog!'));
+          }
+        });
         console.log('upload data: ', JSON.stringify(data, null, 4));
       })
   }
