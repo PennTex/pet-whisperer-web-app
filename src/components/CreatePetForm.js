@@ -17,7 +17,8 @@ export class CreatePetForm extends React.Component {
 
     this.state = {
       files: [],
-      petInfoByImage: null
+      petInfoByImage: null,
+      uploadedImageUrl: ''
     }
   }
 
@@ -28,7 +29,7 @@ export class CreatePetForm extends React.Component {
       type: this.type.getSelectedValue(),
       name: this.name.getValue(),
       birthday: this.birthday.getDate(),
-      image_url: this.image_url.getValue()
+      image_url: this.state.uploadedImageUrl
     }).then((pet) => {
       store.dispatch(actions.addPetSuccess(pet));
 
@@ -39,7 +40,7 @@ export class CreatePetForm extends React.Component {
   }
 
   _onDrop(acceptedFiles, rejectedFiles) {
-    if(rejectedFiles.length > 0) {
+    if (rejectedFiles.length > 0) {
       store.dispatch(actions.showNotification('Image rejected. Must be <100K in size.'))
       return;
     }
@@ -48,6 +49,13 @@ export class CreatePetForm extends React.Component {
       files: acceptedFiles,
       petInfoByImage: 'Analyzing your pet...'
     });
+
+    this.petsService.uploadImage(acceptedFiles[0])
+      .then((image_url) => {
+        this.setState({
+          uploadedImageUrl: image_url
+        });
+      });
 
     this.petsService.imageInfo(acceptedFiles[0])
       .then((data) => {

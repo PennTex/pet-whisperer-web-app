@@ -46,6 +46,22 @@ export default class PetsService {
     return rp(options);
   }
 
+  uploadImage(file) {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    return $.ajax({
+      url: `${config.PET_WHISPERER_API_BASE}/images`,
+      headers: {
+        'Authorization': `Bearer ${this.idToken}`
+      },
+      data: formData,
+      type: 'POST',
+      contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+      processData: false, // NEEDED, DON'T OMIT THIS
+    });
+  }
+
   imageInfo(file) {
     return new Promise((resolve, reject) => {
       const api_key = 'AIzaSyBO_P6lhW5xZbwqfgTZlpC9aKAiN-HeNKQ';
