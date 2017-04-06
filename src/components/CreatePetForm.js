@@ -75,6 +75,10 @@ export class CreatePetForm extends React.Component {
               petInfoByImage: 'Looks like a bird! We prefilled some form data for you.'
             });
             this.type.setSelectedValue('bird');
+          } else {
+            this.setState({
+              petInfoByImage: 'Are you sure you uploaded a picture of a Dog, Cat, or Bird?'
+            });
           }
         });
         console.log('upload data: ', JSON.stringify(data, null, 4));
@@ -91,17 +95,21 @@ export class CreatePetForm extends React.Component {
       },
       dropzone: {
         flex: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
         margin: 20,
-        maxWidth: 150,
         minHeight: 150,
         borderWidth: 2,
         borderColor: "rgb(102, 102, 102)",
         borderStyle: "dashed",
-        borderRadius: 5
+        borderRadius: 5,
+        textAlign: "center"
       }
     };
 
-    let dropzoneInnerContent = <div>Try dropping some files here, or click to select files to upload.</div>;
+    let dropzoneInnerContent = "Drop animal photo here, or click to select a photo to upload.";
 
     if (this.state.files && this.state.files.length > 0) {
       dropzoneInnerContent = this.state.files.map(
