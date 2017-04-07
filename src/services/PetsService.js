@@ -46,6 +46,39 @@ export default class PetsService {
     return rp(options);
   }
 
+  createPetActivity(petId, activity) {
+    var options = {
+      method: "POST",
+      uri: `${config.PET_WHISPERER_API_BASE}/pets/${petId}/activities`,
+      headers: {
+        'Authorization': `Bearer ${this.idToken}`
+      },
+      body: activity,
+      json: true
+    }
+
+    return rp(options)
+      .then(response => {
+        return Promise.resolve(response.data);
+      });;;
+  }
+
+  getPetActivities(petId) {
+    var options = {
+      method: "GET",
+      uri: `${config.PET_WHISPERER_API_BASE}/pets/${petId}/activities`,
+      headers: {
+        'Authorization': `Bearer ${this.idToken}`
+      },
+      json: true
+    }
+
+    return rp(options)
+      .then(response => {
+        return Promise.resolve(response.data);
+      });;
+  }
+
   uploadImage(file) {
     const formData = new FormData();
     formData.append('image', file);
@@ -91,8 +124,6 @@ export default class PetsService {
         rp(options)
           .then(data => {
             resolve(data.responses[0].labelAnnotations);
-          }).catch(err => {
-            reject(err)
           });
       }
 

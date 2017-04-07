@@ -23,18 +23,18 @@ export class FeedPetForm extends React.Component {
   _submit(event) {
     event.preventDefault();
 
-    const name = this.name.getValue(),
-      type = this.type.getSelectedValue(),
-      birthday = this.birthday.getDate(),
-      image_url = this.state.uploadedImageUrl;
+    const type = 'feed',
+      date = this.date.getDate(),
+      time = this.time.state.time,
+      note = this.note.getValue()
 
-    this.petsService.createPet({
+    this.petsService.createPetActivity(this.props.pet.id, {
       type,
-      name,
-      birthday,
-      image_url
-    }).then((pet) => {
-      store.dispatch(actions.addPetSuccess(pet));
+      note
+    }).then((activity) => {
+      store.dispatch(actions.showNotification(`Activity for ${this.props.pet.name} successfully added.`))
+      console.log(this.props.afterSuccess);
+      this.props.afterSuccess(activity);
     })
   }
 
@@ -46,7 +46,7 @@ export class FeedPetForm extends React.Component {
         <div style={{ maxWidth: 300, margin: "auto" }}>
           <DatePicker
             floatingLabelText="Date"
-            ref={(datePicker) => { this.time = datePicker; }}
+            ref={(datePicker) => { this.date = datePicker; }}
           />
           <br />
           <TimePicker

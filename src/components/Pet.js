@@ -9,6 +9,11 @@ import FlatButton from 'material-ui/FlatButton';
 import PetsService from '../services/PetsService';
 import FeedPetForm from './FeedPetForm';
 import * as actions from '../actions';
+import { List, ListItem } from 'material-ui/List';
+import Subheader from 'material-ui/Subheader';
+import Avatar from 'material-ui/Avatar';
+import Restaurant from 'material-ui/svg-icons/maps/restaurant';
+import ActionInfo from 'material-ui/svg-icons/action/info';
 
 export class Pet extends React.Component {
   constructor(props) {
@@ -18,7 +23,9 @@ export class Pet extends React.Component {
 
     this.state = {
       expanded: false,
-      feedPetModalOpen: false
+      feedPetModalOpen: false,
+      activityInfoModalOpen: false,
+      activities: []
     };
   }
 
@@ -33,24 +40,56 @@ export class Pet extends React.Component {
 
   _handleExpandChange(expanded) {
     this.setState({ expanded: expanded });
+
+    if (expanded) {
+      this.petsService.getPetActivities(this.props.pet.id)
+        .then((activities) => {
+          activities.sort(function (a, b) {
+            a = a.created_at;
+            b = b.created_at;
+
+            if (a > b) return -1;
+            if (b < a) return 1;
+            return 0;
+          });
+
+          this.setState({ activities });
+        });
+    }
   };
 
   _handleToggle(event, toggle) {
     this.setState({ expanded: toggle });
   };
 
-  _handleExpand() {
-    this.setState({ expanded: true });
-  };
-
   _handleReduce() {
     this.setState({ expanded: false });
   };
 
-  _openFeedPetModal(pet) {
+  _openActivityInfoModal(activity) {
+    this.setState({
+      activityInfoModalOpen: true,
+      activity
+    });
+  }
+
+  _closeActivityInfoModal() {
+    this.setState({
+      activityInfoModalOpen: false
+    });
+  }
+
+  _openFeedPetModal() {
     this.setState({
       feedPetModalOpen: true,
-      pet
+    });
+  }
+
+  _addActivitySuccess(activity) {
+    this._closeFeedPetModal();
+
+    this.setState({
+      activities: this.state.activities.concat([activity])
     });
   }
 
@@ -62,6 +101,29 @@ export class Pet extends React.Component {
     const leftColStyle = {
       textAlign: "center"
     };
+
+    const activityModalActions = [
+      <FlatButton
+        label="Close"
+        primary={true}
+        onTouchTap={this._closeActivityInfoModal.bind(this)}
+      />
+    ];
+
+    let activities = (<h2 style={{ textAlign: "center" }}>No activities yet.</h2>);
+
+    if (this.state.activities.length > 0) {
+      activities = this.state.activities.map((activity, i) => {
+        return (<ListItem
+          key={i}
+          leftAvatar={<Avatar icon={<Restaurant />} />}
+          rightIcon={<ActionInfo />}
+          primaryText={activity.note ? activity.note : ''}
+          secondaryText="Apr 7, 2017"
+          onTouchTap={() => this._openActivityInfoModal(activity)}
+        />)
+      })
+    }
 
     return (
       <div>
@@ -81,11 +143,10 @@ export class Pet extends React.Component {
           </CardMedia>
           <CardTitle title="Activities" subtitle={"Some things " + this.props.pet.name + " has done."} expandable={true} />
           <CardText expandable={true}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.
-          Donec vulputate interdum sollicitudin. Nunc lacinia auctor quam sed pellentesque.
-          Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
-        </CardText>
+            <List>
+              {activities}
+            </List>
+          </CardText>
           <CardActions>
             <FlatButton label="Feed" onTouchTap={this._openFeedPetModal.bind(this)} />
             <FlatButton label="Medication" onTouchTap={this._openFeedPetModal.bind(this)} />
@@ -100,7 +161,16 @@ export class Pet extends React.Component {
           onRequestClose={this._closeFeedPetModal.bind(this)}
           autoScrollBodyContent={true}
         >
-          <FeedPetForm pet={this.state.pet} afterSuccess={this._closeFeedPetModal.bind(this)} />
+          <FeedPetForm pet={this.props.pet} afterSuccess={this._addActivitySuccess.bind(this)} />
+        </Dialog>
+
+        <Dialog
+          actions={activityModalActions}
+          open={this.state.activityInfoModalOpen}
+          onRequestClose={this._closeActivityInfoModal.bind(this)}
+          autoScrollBodyContent={true}
+        >
+          <p>Some more info and stuff.</p>
         </Dialog>
 
       </div>
