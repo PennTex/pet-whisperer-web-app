@@ -3,8 +3,8 @@ import Pet from './Pet';
 import { connect } from 'react-redux';
 import store from '../store';
 import Nav from './Nav';
-import FlatButton from 'material-ui/FlatButton';
 import FontIcon from 'material-ui/FontIcon';
+import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 import CreatePetForm from './CreatePetForm';
 import PetsService from '../services/PetsService';
@@ -38,29 +38,19 @@ export class Dashboard extends React.Component {
       });
   }
 
-  openCreatePetModal() {
+  _onSubmit() {
+    this.setState({ submitCreatePetForm: true });
+  }
+
+  _openCreatPetModal() {
     this.setState({ createPetModalOpen: true });
   }
 
-  closeCreatePetModal() {
+  _closeCreatPetModal() {
     this.setState({ createPetModalOpen: false });
   }
 
   render() {
-    const createPetModalActions = [
-      <FlatButton
-        label="Cancel"
-        primary={true}
-        onTouchTap={this.closeCreatePetModal.bind(this)}
-      />,
-      <FlatButton
-        label="Submit"
-        primary={true}
-        keyboardFocused={true}
-        onTouchTap={this.closeCreatePetModal.bind(this)}
-      />,
-    ];
-
     if (this.props.profile) {
       let petsDisplay = '';
 
@@ -84,7 +74,7 @@ export class Dashboard extends React.Component {
                 icon={<FontIcon className="fa fa-plus-square" />}
                 data-toggle="modal" data-target="#createPetModal"
                 style={{ float: "right", margin: 20 }}
-                onClick={this.openCreatePetModal.bind(this)}
+                onClick={this._openCreatPetModal.bind(this)}
               />
 
               <div style={{ clear: "both" }}></div>
@@ -94,13 +84,12 @@ export class Dashboard extends React.Component {
 
             <Dialog
               title="Add Pet"
-              actions={createPetModalActions}
               modal={false}
               open={this.state.createPetModalOpen}
-              onRequestClose={this.closeCreatePetModal.bind(this)}
+              onRequestClose={this._closeCreatPetModal.bind(this)}
               autoScrollBodyContent={true}
             >
-              <CreatePetForm afterCreateSuccess={this.closeCreatePetModal.bind(this)}/>
+              <CreatePetForm afterSuccess={this._closeCreatPetModal.bind(this)}/>
             </Dialog>
 
             <Notification />

@@ -3,6 +3,7 @@ import request from 'request';
 import { connect } from 'react-redux';
 import store from '../store';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
+import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import DatePicker from 'material-ui/DatePicker';
 import Dropzone from 'react-dropzone';
@@ -18,23 +19,48 @@ export class CreatePetForm extends React.Component {
     this.state = {
       files: [],
       petInfoByImage: null,
-      uploadedImageUrl: ''
+      uploadedImageUrl: '',
+      formErrors: {
+        name: '',
+        type: ''
+      }
     }
   }
 
   _submit(event) {
     event.preventDefault();
 
+    let formErrors = this.state.formErrors;
+    let formIsValid = true;
+
+    const name = this.name.getValue(),
+      type = this.type.getSelectedValue(),
+      birthday = this.birthday.getDate(),
+      image_url = this.state.uploadedImageUrl;
+
+    if (!name) {
+      formErrors.name = 'Name is required.';
+      formIsValid = false;
+    }
+
+    if (!formIsValid) {
+      this.setState({
+        formErrors
+      });
+
+      return;
+    }
+
     this.petsService.createPet({
-      type: this.type.getSelectedValue(),
-      name: this.name.getValue(),
-      birthday: this.birthday.getDate(),
-      image_url: this.state.uploadedImageUrl
+      type,
+      name,
+      birthday,
+      image_url
     }).then((pet) => {
       store.dispatch(actions.addPetSuccess(pet));
 
-      if (this.props.afterCreateSuccess) {
-        this.props.afterCreateSuccess();
+      if (this.props.afterSuccess) {
+        this.props.afterSuccess();
       }
     })
   }
@@ -59,30 +85,33 @@ export class CreatePetForm extends React.Component {
 
     this.petsService.imageInfo(acceptedFiles[0])
       .then((data) => {
-        data.forEach(item => {
-          if (item.description === "dog") {
-            this.setState({
-              petInfoByImage: 'Looks like a dog! We prefilled some form data for you.'
-            });
-            this.type.setSelectedValue('dog');
-          } else if (item.description === "cat") {
-            this.setState({
-              petInfoByImage: 'Looks like a cat! We prefilled some form data for you.'
-            });
-            this.type.setSelectedValue('cat');
-          } else if (item.description === "bird") {
-            this.setState({
-              petInfoByImage: 'Looks like a bird! We prefilled some form data for you.'
-            });
-            this.type.setSelectedValue('bird');
-          } else {
-            this.setState({
-              petInfoByImage: 'Are you sure you uploaded a picture of a Dog, Cat, or Bird?'
-            });
+        let determinedPetType = null;
+
+        for (let i = 0, x = data.length; i < x; i++) {
+          if (data[i].description === 'dog') {
+            determinedPetType = 'dog';
+            break;
+          } else if (data[i].description === 'cat') {
+            determinedPetType = 'cat';
+            break;
+          } else if (data[i].description === 'bird') {
+            determinedPetType = 'bird';
+            break;
           }
-        });
+        }
+
         console.log('upload data: ', JSON.stringify(data, null, 4));
-      })
+
+        const petInfoByImage = determinedPetType ? `Looks like a ${determinedPetType}! We prefilled some form data for you.` : 'Are you sure you uploaded a picture of a Dog, Cat, or Bird?';
+
+        this.setState({
+          petInfoByImage
+        });
+
+        if (determinedPetType) {
+          this.type.setSelectedValue(determinedPetType);
+        }
+      });
   }
 
   render() {
@@ -123,34 +152,44 @@ export class CreatePetForm extends React.Component {
         <Dropzone name="image_url" maxSize={100000} onDrop={this._onDrop.bind(this)} style={styles.dropzone} multiple={false} >
           <div>{dropzoneInnerContent}</div>
         </Dropzone>
-        {this.state.petInfoByImage}
-        <br />
-        <TextField
-          floatingLabelText="Name"
-          id="name" name="name" ref={(input) => { this.name = input; }}
+        <div style={{ maxWidth: 300, margin: "auto" }}>
+          {this.state.petInfoByImage}
+          <br />
+          <TextField
+            floatingLabelText="Name"
+            id="name" name="name" ref={(input) => { this.name = input; }}
+            errorText={this.state.formErrors.name}
+          />
+          <br />
+          <DatePicker id="birthday" name="birthday" floatingLabelText="Birthday" ref={(datePicker) => { this.birthday = datePicker; }} />
+          <br />
+          <RadioButtonGroup id="type" name="type" 
+            defaultSelected="unknown" 
+            ref={(radio) => { this.type = radio; }}>
+            <RadioButton
+              value="dog"
+              label="dog"
+              style={styles.radioButton}
+            />
+            <RadioButton
+              value="cat"
+              label="cat"
+              style={styles.radioButton}
+            />
+            <RadioButton
+              value="bird"
+              label="bird"
+              style={styles.radioButton}
+            />
+          </RadioButtonGroup>
+        </div>
+        <FlatButton
+          type="submit"
+          label="Submit"
+          primary={true}
+          keyboardFocused={true}
+          style={{ float: 'right' }}
         />
-        <br />
-        <DatePicker id="birthday" name="birthday" floatingLabelText="Birthday" ref={(datePicker) => { this.birthday = datePicker; }} />
-        <br />
-        <RadioButtonGroup id="type" name="type" defaultSelected="not_light" ref={(radio) => { this.type = radio; }}>
-          <RadioButton
-            value="dog"
-            label="dog"
-            style={styles.radioButton}
-          />
-          <RadioButton
-            value="cat"
-            label="cat"
-            style={styles.radioButton}
-          />
-          <RadioButton
-            value="bird"
-            label="bird"
-            style={styles.radioButton}
-          />
-        </RadioButtonGroup>
-
-        <button type="submit" className="btn btn-primary">Submit</button>
       </form>);
   }
 }
