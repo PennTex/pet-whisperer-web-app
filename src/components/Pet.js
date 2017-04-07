@@ -8,11 +8,13 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import PetsService from '../services/PetsService';
 import FeedPetForm from './FeedPetForm';
+import MedicatePetForm from './MedicatePetForm';
 import * as actions from '../actions';
 import { List, ListItem } from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
 import Restaurant from 'material-ui/svg-icons/maps/restaurant';
+import Healing from  'material-ui/svg-icons/image/healing';
 import ActionInfo from 'material-ui/svg-icons/action/info';
 
 export class Pet extends React.Component {
@@ -24,6 +26,7 @@ export class Pet extends React.Component {
     this.state = {
       expanded: false,
       feedPetModalOpen: false,
+      medicatePetModalOpen: false,
       activityInfoModalOpen: false,
       activities: []
     };
@@ -85,16 +88,30 @@ export class Pet extends React.Component {
     });
   }
 
-  _addActivitySuccess(activity) {
-    this._closeFeedPetModal();
+  _closeFeedPetModal() {
+    this.setState({ feedPetModalOpen: false });
+  }
 
+  _openMedicatePetModal() {
     this.setState({
-      activities: this.state.activities.concat([activity])
+      medicatePetModalOpen: true,
     });
   }
 
-  _closeFeedPetModal() {
-    this.setState({ feedPetModalOpen: false });
+  _closeMedicatePetModal() {
+    this.setState({ medicatePetModalOpen: false });
+  }
+
+  _addActivitySuccess(activity) {
+    this._closeFeedPetModal();
+    this._closeMedicatePetModal();
+    
+    let activities = this.state.activities.concat();
+    activities.unshift(activity);
+
+    this.setState({
+      activities
+    });
   }
 
   render() {
@@ -114,9 +131,17 @@ export class Pet extends React.Component {
 
     if (this.state.activities.length > 0) {
       activities = this.state.activities.map((activity, i) => {
+        let activityIcon = <span />;
+
+        if (activity.type === 'feed') {
+          activityIcon = <Avatar icon={<Restaurant />} style={{backgroundColor: '#81C784'}}/>;
+        } else if (activity.type === 'medication') {
+          activityIcon = <Avatar icon={<Healing />} style={{backgroundColor: '#E57373'}}/>;
+        }
+
         return (<ListItem
           key={i}
-          leftAvatar={<Avatar icon={<Restaurant />} />}
+          leftAvatar={activityIcon}
           rightIcon={<ActionInfo />}
           primaryText={activity.note ? activity.note : ''}
           secondaryText="Apr 7, 2017"
@@ -149,19 +174,27 @@ export class Pet extends React.Component {
           </CardText>
           <CardActions>
             <FlatButton label="Feed" onTouchTap={this._openFeedPetModal.bind(this)} />
-            <FlatButton label="Medication" onTouchTap={this._openFeedPetModal.bind(this)} />
+            <FlatButton label="Medication" onTouchTap={this._openMedicatePetModal.bind(this)} />
             <FlatButton label="Delete" onTouchTap={this._handleDelete.bind(this)} />
           </CardActions>
         </Card>
 
         <Dialog
           title={`Feed ${this.props.pet.name}`}
-          modal={false}
           open={this.state.feedPetModalOpen}
           onRequestClose={this._closeFeedPetModal.bind(this)}
           autoScrollBodyContent={true}
         >
           <FeedPetForm pet={this.props.pet} afterSuccess={this._addActivitySuccess.bind(this)} />
+        </Dialog>
+
+        <Dialog
+          title={`Medicate ${this.props.pet.name}`}
+          open={this.state.medicatePetModalOpen}
+          onRequestClose={this._closeMedicatePetModal.bind(this)}
+          autoScrollBodyContent={true}
+        >
+          <MedicatePetForm pet={this.props.pet} afterSuccess={this._addActivitySuccess.bind(this)} />
         </Dialog>
 
         <Dialog

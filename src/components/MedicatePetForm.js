@@ -11,7 +11,7 @@ import Dropzone from 'react-dropzone';
 import PetsService from '../services/PetsService';
 import * as actions from '../actions';
 
-export class FeedPetForm extends React.Component {
+export class MedicatePetForm extends React.Component {
   constructor(props) {
     super(props);
 
@@ -23,7 +23,7 @@ export class FeedPetForm extends React.Component {
   _submit(event) {
     event.preventDefault();
 
-    const type = 'feed',
+    const type = 'medication',
       date = this.date.getDate(),
       time = this.time.state.time,
       note = this.note.getValue()
@@ -81,4 +81,4 @@ export default connect(
   (store) => ({
     idToken: store.idTokenState
   })
-)(FeedPetForm)
+)(MedicatePetForm)
