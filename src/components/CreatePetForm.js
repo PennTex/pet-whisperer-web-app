@@ -163,8 +163,8 @@ export class CreatePetForm extends React.Component {
           <br />
           <DatePicker id="birthday" name="birthday" floatingLabelText="Birthday" ref={(datePicker) => { this.birthday = datePicker; }} />
           <br />
-          <RadioButtonGroup id="type" name="type" 
-            defaultSelected="unknown" 
+          <RadioButtonGroup id="type" name="type"
+            defaultSelected="unknown"
             ref={(radio) => { this.type = radio; }}>
             <RadioButton
               value="dog"
@@ -183,12 +183,18 @@ export class CreatePetForm extends React.Component {
             />
           </RadioButtonGroup>
         </div>
+
         <FlatButton
           type="submit"
           label="Submit"
           primary={true}
-          keyboardFocused={true}
           style={{ float: 'right' }}
+        />
+        <FlatButton
+          label="Close"
+          primary={true}
+          style={{ float: 'right' }}
+          onClick={this.props.afterSuccess}
         />
       </form>);
   }
