@@ -75,7 +75,17 @@ export default class PetsService {
 
     return rp(options)
       .then(response => {
-        return Promise.resolve(response.data);
+        let activities = response.data;
+
+        console.log('before sort', activities);
+
+        activities.sort(function (a, b) {
+          return b.created_at - a.created_at;
+        });
+
+        console.log('after sort', activities);
+
+        return Promise.resolve(activities);
       });;
   }
 

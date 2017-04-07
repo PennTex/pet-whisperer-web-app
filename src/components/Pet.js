@@ -47,15 +47,6 @@ export class Pet extends React.Component {
     if (expanded) {
       this.petsService.getPetActivities(this.props.pet.id)
         .then((activities) => {
-          activities.sort(function (a, b) {
-            a = a.created_at;
-            b = b.created_at;
-
-            if (a > b) return -1;
-            if (b < a) return 1;
-            return 0;
-          });
-
           this.setState({ activities });
         });
     }
@@ -105,7 +96,7 @@ export class Pet extends React.Component {
   _addActivitySuccess(activity) {
     this._closeFeedPetModal();
     this._closeMedicatePetModal();
-    
+
     let activities = this.state.activities.concat();
     activities.unshift(activity);
 
