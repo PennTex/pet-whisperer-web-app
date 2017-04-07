@@ -67,7 +67,7 @@ export class CreatePetForm extends React.Component {
 
   _onDrop(acceptedFiles, rejectedFiles) {
     if (rejectedFiles.length > 0) {
-      store.dispatch(actions.showNotification('Image rejected. Must be <100K in size.'))
+      store.dispatch(actions.showNotification('Image rejected. Must be <1M in size.'))
       return;
     }
 
@@ -149,7 +149,7 @@ export class CreatePetForm extends React.Component {
 
     return (
       <form onSubmit={this._submit.bind(this)}>
-        <Dropzone name="image_url" maxSize={100000} onDrop={this._onDrop.bind(this)} style={styles.dropzone} multiple={false} >
+        <Dropzone name="image_url" maxSize={1000000} onDrop={this._onDrop.bind(this)} style={styles.dropzone} multiple={false} >
           <div>{dropzoneInnerContent}</div>
         </Dropzone>
         <div style={{ maxWidth: 300, margin: "auto" }}>
