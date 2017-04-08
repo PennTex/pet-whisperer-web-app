@@ -11,6 +11,7 @@ import PetsService from '../services/PetsService';
 import * as actions from '../actions';
 import Notification from './Notification';
 import Add from 'material-ui/svg-icons/content/add';
+import RefreshIndicator from 'material-ui/RefreshIndicator';
 
 export class Dashboard extends React.Component {
   constructor(props) {
@@ -19,7 +20,8 @@ export class Dashboard extends React.Component {
     this.petsService = new PetsService({ idToken: this.props.auth.getToken() });
 
     this.state = {
-      createPetModalOpen: false
+      createPetModalOpen: false,
+      loadingPets: false
     }
   }
 
@@ -28,11 +30,19 @@ export class Dashboard extends React.Component {
   }
 
   _getPets() {
+    this.setState({
+      loadingPets: true
+    });
+
     this.petsService.getPets()
       .then(pets => {
         if (pets) {
           store.dispatch(actions.getPetsSuccess(pets));
         }
+      }).finally(() => {
+        this.setState({
+          loadingPets: false
+        });
       });
   }
 
@@ -49,15 +59,23 @@ export class Dashboard extends React.Component {
   }
 
   render() {
-    let petsDisplay = '';
 
+    let petsListStyle = {
+      display: this.state.loadingPets ? 'none' : 'initial'
+    };
+    let refreshStyle = {
+      display: 'block',
+      margin: 'auto',
+      position: 'relative'
+    };
+
+    let petsDisplay = (<h2 style={{ textAlign: "center" }}>Add some pets!</h2>);
+    
     if (this.props.pets.length > 0) {
       petsDisplay = this.props.pets.map((pet, i) => {
         return <div key={pet.id}><Pet key={pet.id} pet={pet} idToken={this.props.idToken} auth={this.props.auth} /> <br /></div>
       })
-    } else {
-      petsDisplay = (<h2 style={{ textAlign: "center" }}>Add some pets!</h2>)
-    }
+    } 
 
     return (
       <div>
@@ -76,7 +94,18 @@ export class Dashboard extends React.Component {
 
             <div style={{ clear: "both" }}></div>
 
-            <div style={{maxWidth: 700, margin: 'auto'}}>{petsDisplay}</div>
+            <div style={{ maxWidth: 700, margin: 'auto' }}>
+              <RefreshIndicator
+                size={40}
+                left={10}
+                top={0}
+                status={this.state.loadingPets ? 'loading' : 'hide'}
+                style={refreshStyle}
+              />
+              <div style={petsListStyle}>
+                {petsDisplay}
+              </div>
+            </div>
           </div>
 
           <Dialog

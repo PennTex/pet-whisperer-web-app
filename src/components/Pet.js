@@ -14,8 +14,9 @@ import { List, ListItem } from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
 import Restaurant from 'material-ui/svg-icons/maps/restaurant';
-import Healing from  'material-ui/svg-icons/image/healing';
+import Healing from 'material-ui/svg-icons/image/healing';
 import ActionInfo from 'material-ui/svg-icons/action/info';
+import RefreshIndicator from 'material-ui/RefreshIndicator';
 
 export class Pet extends React.Component {
   constructor(props) {
@@ -28,8 +29,30 @@ export class Pet extends React.Component {
       feedPetModalOpen: false,
       medicatePetModalOpen: false,
       activityInfoModalOpen: false,
-      activities: []
+      activities: [],
+      loadingActivities: false,
     };
+  }
+
+  componentDidMount() {
+    this._getActivities();
+  }
+
+  _getActivities() {
+    this.setState({
+      loadingActivities: true
+    });
+
+    this.petsService.getPetActivities(this.props.pet.id)
+      .then((activities) => {
+        this.setState({
+          activities
+        });
+      }).finally(() => {
+        this.setState({
+          loadingActivities: false
+        });
+      });
   }
 
   _handleDelete() {
@@ -46,15 +69,7 @@ export class Pet extends React.Component {
 
   _handleExpandChange(expanded) {
     this.setState({ expanded: expanded });
-
-    if (expanded) {
-      this.petsService.getPetActivities(this.props.pet.id)
-        .then((activities) => {
-          this.setState({ activities });
-        });
-    }
-  };
-
+  }
   _handleToggle(event, toggle) {
     this.setState({ expanded: toggle });
   };
@@ -113,6 +128,16 @@ export class Pet extends React.Component {
       textAlign: "center"
     };
 
+    let petsListStyle = {
+      display: this.state.loadingActivities ? 'none' : 'initial'
+    };
+
+    let refreshStyle = {
+      display: 'block',
+      margin: 'auto',
+      position: 'relative'
+    };
+
     const activityModalActions = [
       <FlatButton
         label="Close"
@@ -128,9 +153,9 @@ export class Pet extends React.Component {
         let activityIcon = <span />;
 
         if (activity.type === 'feed') {
-          activityIcon = <Avatar icon={<Restaurant />} style={{backgroundColor: '#81C784'}}/>;
+          activityIcon = <Avatar icon={<Restaurant />} style={{ backgroundColor: '#81C784' }} />;
         } else if (activity.type === 'medication') {
-          activityIcon = <Avatar icon={<Healing />} style={{backgroundColor: '#E57373'}}/>;
+          activityIcon = <Avatar icon={<Healing />} style={{ backgroundColor: '#E57373' }} />;
         }
 
         return (<ListItem
@@ -162,7 +187,14 @@ export class Pet extends React.Component {
           </CardMedia>
           <CardTitle title="Activities" subtitle={"Some things " + this.props.pet.name + " has done."} expandable={true} />
           <CardText expandable={true}>
-            <List>
+            <RefreshIndicator
+              size={40}
+              left={10}
+              top={0}
+              status={this.state.loadingActivities ? 'loading' : 'hide'}
+              style={refreshStyle}
+            />
+            <List style={petsListStyle}>
               {activities}
             </List>
           </CardText>
@@ -188,7 +220,7 @@ export class Pet extends React.Component {
           onRequestClose={this._closeMedicatePetModal.bind(this)}
           autoScrollBodyContent={true}
         >
-          <MedicatePetForm pet={this.props.pet} afterSuccess={this._addActivitySuccess.bind(this)} auth={this.props.auth}  />
+          <MedicatePetForm pet={this.props.pet} afterSuccess={this._addActivitySuccess.bind(this)} auth={this.props.auth} />
         </Dialog>
 
         <Dialog
