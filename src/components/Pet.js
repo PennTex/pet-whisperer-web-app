@@ -34,7 +34,7 @@ export class Pet extends React.Component {
 
   _handleDelete() {
     event.preventDefault();
-    if (!window.confirm(`Are you sure you want to delet ${this.props.pet.name}?`)) {
+    if (!window.confirm(`Are you sure you want to delete ${this.props.pet.name}?`)) {
       return;
     }
 
