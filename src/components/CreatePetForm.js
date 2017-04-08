@@ -37,6 +37,8 @@ export default class CreatePetForm extends React.Component {
       birthday = this.birthday.getDate(),
       image_url = this.state.uploadedImageUrl;
 
+      console.log('birthday', birthday);
+
     if (!name) {
       formErrors.name = 'Name is required.';
       formIsValid = false;
@@ -137,6 +139,9 @@ export default class CreatePetForm extends React.Component {
       }
     };
 
+    const defaultDate = new Date();
+
+
     let dropzoneInnerContent = <div><AddAPhoto /><div>Drop animal photo here, or click to select a photo to upload.</div></div>;
 
     if (this.state.files && this.state.files.length > 0) {
@@ -156,16 +161,17 @@ export default class CreatePetForm extends React.Component {
           <br />
           <TextField
             floatingLabelText="Name"
-            id="name" name="name" ref={(input) => { this.name = input; }}
+            ref={(input) => { this.name = input; }}
             errorText={this.state.formErrors.name}
           />
           <br />
           <DatePicker 
-            id="birthday" name="birthday" floatingLabelText="Birthday" 
+            floatingLabelText="Birthday" 
             autoOk={true}
+            defaultDate={defaultDate}
             ref={(datePicker) => { this.birthday = datePicker; }} />
           <br />
-          <RadioButtonGroup id="type" name="type"
+          <RadioButtonGroup
             defaultSelected="unknown"
             ref={(radio) => { this.type = radio; }}>
             <RadioButton

@@ -37,6 +37,7 @@ export default class MedicatePetForm extends React.Component {
 
   render() {
     const styles = {};
+    const defaultDate = new Date();
 
     return (
       <form onSubmit={this._submit.bind(this)}>
@@ -44,12 +45,14 @@ export default class MedicatePetForm extends React.Component {
           <DatePicker
             floatingLabelText="Date"
             autoOk={true}
+            defaultDate={defaultDate}
             ref={(datePicker) => { this.date = datePicker; }}
           />
           <br />
           <TimePicker
             floatingLabelText="Time"
             autoOk={true}
+            defaultTime={defaultDate}
             ref={(timePicker) => { this.time = timePicker; }}
           />
           <br />
