@@ -43,7 +43,7 @@ export class Pet extends React.Component {
       loadingActivities: true
     });
 
-    this.petsService.getPetActivities(this.props.pet.id)
+    return this.petsService.getPetActivities(this.props.pet.id)
       .then((activities) => {
         this.setState({
           activities

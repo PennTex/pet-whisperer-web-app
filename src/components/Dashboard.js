@@ -86,7 +86,6 @@ export class Dashboard extends React.Component {
               href="#"
               label="New Pet"
               secondary={true}
-              icon={<Add />}
               data-toggle="modal" data-target="#createPetModal"
               style={{ float: "right", margin: 20 }}
               onClick={this._openCreatPetModal.bind(this)}
