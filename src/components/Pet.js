@@ -185,7 +185,9 @@ export class Pet extends React.Component {
           >
             <img src={this.props.pet.image_url} />
           </CardMedia>
+
           <CardTitle title="Activities" subtitle={"Some things " + this.props.pet.name + " has done."} expandable={true} />
+
           <CardText expandable={true}>
             <RefreshIndicator
               size={40}
@@ -198,10 +200,17 @@ export class Pet extends React.Component {
               {activities}
             </List>
           </CardText>
+
           <CardActions>
-            <FlatButton label="Feed" onTouchTap={this._openFeedPetModal.bind(this)} />
-            <FlatButton label="Medication" onTouchTap={this._openMedicatePetModal.bind(this)} />
-            <FlatButton label="Delete" onTouchTap={this._handleDelete.bind(this)} />
+            <FlatButton label="Feed"
+              icon={<Restaurant style={{ fill: '#81C784' }} />}
+              onTouchTap={this._openFeedPetModal.bind(this)} />
+            <FlatButton label="Medication"
+              icon={<Healing style={{ fill: '#E57373' }} />}
+              onTouchTap={this._openMedicatePetModal.bind(this)} />
+            <FlatButton
+              style={{ float: "right" }}
+              label="Delete" onTouchTap={this._handleDelete.bind(this)} />
           </CardActions>
         </Card>
 

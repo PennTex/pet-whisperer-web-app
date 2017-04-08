@@ -10,7 +10,7 @@ import CreatePetForm from './CreatePetForm';
 import PetsService from '../services/PetsService';
 import * as actions from '../actions';
 import Notification from './Notification';
-import Add from 'material-ui/svg-icons/content/add';
+import AddBox from 'material-ui/svg-icons/content/add-box';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 
 export class Dashboard extends React.Component {
@@ -66,26 +66,28 @@ export class Dashboard extends React.Component {
     let refreshStyle = {
       display: 'block',
       margin: 'auto',
-      position: 'relative'
+      position: 'relative',
+      display: this.state.loadingPets ? 'initial' : 'none'
     };
 
     let petsDisplay = (<h2 style={{ textAlign: "center" }}>Add some pets!</h2>);
-    
+
     if (this.props.pets.length > 0) {
       petsDisplay = this.props.pets.map((pet, i) => {
         return <div key={pet.id}><Pet key={pet.id} pet={pet} idToken={this.props.idToken} auth={this.props.auth} /> <br /></div>
       })
-    } 
+    }
 
     return (
       <div>
         <Nav auth={this.props.auth}></Nav>
         <div className="col-lg-12">
-          <div className="row">
+          <div className="row" style={{ maxWidth: 700, margin: 'auto' }}>
             <FlatButton
               href="#"
               label="New Pet"
               secondary={true}
+              icon={<AddBox />}
               data-toggle="modal" data-target="#createPetModal"
               style={{ float: "right", margin: 20 }}
               onClick={this._openCreatPetModal.bind(this)}
@@ -93,17 +95,15 @@ export class Dashboard extends React.Component {
 
             <div style={{ clear: "both" }}></div>
 
-            <div style={{ maxWidth: 700, margin: 'auto' }}>
-              <RefreshIndicator
-                size={40}
-                left={10}
-                top={0}
-                status={this.state.loadingPets ? 'loading' : 'hide'}
-                style={refreshStyle}
-              />
-              <div style={petsListStyle}>
-                {petsDisplay}
-              </div>
+            <RefreshIndicator
+              size={40}
+              left={10}
+              top={0}
+              status={this.state.loadingPets ? 'loading' : 'hide'}
+              style={refreshStyle}
+            />
+            <div style={petsListStyle}>
+              {petsDisplay}
             </div>
           </div>
 

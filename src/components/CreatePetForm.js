@@ -37,7 +37,7 @@ export default class CreatePetForm extends React.Component {
       birthday = this.birthday.getDate(),
       image_url = this.state.uploadedImageUrl;
 
-      console.log('birthday', birthday);
+      console.log('birthday', Math.round(birthday.getTime() / 1000));
 
     if (!name) {
       formErrors.name = 'Name is required.';
@@ -142,7 +142,7 @@ export default class CreatePetForm extends React.Component {
     const defaultDate = new Date();
 
 
-    let dropzoneInnerContent = <div><AddAPhoto /><div>Drop animal photo here, or click to select a photo to upload.</div></div>;
+    let dropzoneInnerContent = <div><AddAPhoto /><div>Drop pet photo here, or click to select a photo to upload.</div></div>;
 
     if (this.state.files && this.state.files.length > 0) {
       dropzoneInnerContent = this.state.files.map(
