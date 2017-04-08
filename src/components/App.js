@@ -1,61 +1,37 @@
 import React from 'react';
 import Login from './Login';
 import Dashboard from './Dashboard';
-import { connect } from 'react-redux';
-import store from '../store';
 import * as config from '../config';
+import AuthService from '../services/AuthService';
 
-export class App extends React.Component {
+export default class App extends React.Component {
   componentWillMount() {
-    this.createLock();
+    this.auth = new AuthService(config.AUTH0_CLIENT_ID, config.AUTH0_DOMAIN, {});
 
     this.state = {
-      idToken: this.getIdToken()
+      isLoggedIn: this.auth.loggedIn()
     };
-  }
 
-  createLock() {
-    this.lock = new Auth0Lock(config.AUTH0_CLIENT_ID, config.AUTH0_DOMAIN);
-  }
+    this.auth.on('logged_in', () => {
+      console.log('logged in', this.auth.loggedIn());
+      this.setState({
+        isLoggedIn: this.auth.loggedIn()
+      });
+    });
 
-  getIdToken() {
-    var idToken = localStorage.getItem('userToken');
-    var authHash = this.lock.parseHash(window.location.hash);
-
-    if (!idToken && authHash) {
-      if (authHash.id_token) {
-        idToken = authHash.id_token
-        localStorage.setItem('userToken', authHash.id_token);
-      }
-
-      if (authHash.error) {
-        console.log("Error signing in", authHash);
-      }
-    }
-
-    this.props.setIdToken(idToken);
-    window.history.replaceState(null, null, window.location.pathname);
-
-    return idToken;
+    this.auth.on('logged_out', () => {
+      console.log('logged out', this.auth.loggedIn());
+      this.setState({
+        isLoggedIn: this.auth.loggedIn()
+      });
+    });
   }
 
   render() {
-    if (this.state.idToken) {
-      return (<Dashboard lock={this.lock} />);
+    if (this.state.isLoggedIn) {
+      return (<Dashboard auth={this.auth} />);
     } else {
-      return (<Login lock={this.lock} />);
+      return (<Login auth={this.auth} />);
     }
   }
 }
-
-export default connect(
-  store => ({
-    idToken: store.idTokenState
-  }),
-  dispatch => ({
-    setIdToken: (idToken) => dispatch({
-      type: 'ID_TOKEN_SUCCESS',
-      idToken: idToken
-    })
-  })
-)(App)

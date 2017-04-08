@@ -21,7 +21,7 @@ export class Pet extends React.Component {
   constructor(props) {
     super(props);
 
-    this.petsService = new PetsService({ idToken: props.idToken });
+    this.petsService = new PetsService({ idToken: this.props.auth.getToken() });
 
     this.state = {
       expanded: false,
@@ -34,6 +34,9 @@ export class Pet extends React.Component {
 
   _handleDelete() {
     event.preventDefault();
+    if (!window.confirm(`Are you sure you want to delet ${this.props.pet.name}?`)) {
+      return;
+    }
 
     this.petsService.deletePet(this.props.pet.id)
       .then(() => {
@@ -176,7 +179,7 @@ export class Pet extends React.Component {
           onRequestClose={this._closeFeedPetModal.bind(this)}
           autoScrollBodyContent={true}
         >
-          <FeedPetForm pet={this.props.pet} afterSuccess={this._addActivitySuccess.bind(this)} />
+          <FeedPetForm pet={this.props.pet} afterSuccess={this._addActivitySuccess.bind(this)} auth={this.props.auth} />
         </Dialog>
 
         <Dialog
@@ -185,7 +188,7 @@ export class Pet extends React.Component {
           onRequestClose={this._closeMedicatePetModal.bind(this)}
           autoScrollBodyContent={true}
         >
-          <MedicatePetForm pet={this.props.pet} afterSuccess={this._addActivitySuccess.bind(this)} />
+          <MedicatePetForm pet={this.props.pet} afterSuccess={this._addActivitySuccess.bind(this)} auth={this.props.auth}  />
         </Dialog>
 
         <Dialog

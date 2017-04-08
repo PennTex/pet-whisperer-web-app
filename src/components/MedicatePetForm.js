@@ -1,6 +1,4 @@
 import React from 'react';
-import request from 'request';
-import { connect } from 'react-redux';
 import store from '../store';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import FlatButton from 'material-ui/FlatButton';
@@ -11,11 +9,11 @@ import Dropzone from 'react-dropzone';
 import PetsService from '../services/PetsService';
 import * as actions from '../actions';
 
-export class MedicatePetForm extends React.Component {
+export default class MedicatePetForm extends React.Component {
   constructor(props) {
     super(props);
 
-    this.petsService = new PetsService({ idToken: this.props.idToken });
+    this.petsService = new PetsService({ idToken: this.props.auth.getToken() });
 
     this.state = {}
   }
@@ -45,11 +43,13 @@ export class MedicatePetForm extends React.Component {
         <div style={{ maxWidth: 300, margin: "auto" }}>
           <DatePicker
             floatingLabelText="Date"
+            autoOk={true}
             ref={(datePicker) => { this.date = datePicker; }}
           />
           <br />
           <TimePicker
             floatingLabelText="Time"
+            autoOk={true}
             ref={(timePicker) => { this.time = timePicker; }}
           />
           <br />
@@ -76,9 +76,3 @@ export class MedicatePetForm extends React.Component {
       </form>);
   }
 }
-
-export default connect(
-  (store) => ({
-    idToken: store.idTokenState
-  })
-)(MedicatePetForm)

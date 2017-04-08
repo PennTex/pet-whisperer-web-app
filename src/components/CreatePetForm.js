@@ -1,6 +1,4 @@
 import React from 'react';
-import request from 'request';
-import { connect } from 'react-redux';
 import store from '../store';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import FlatButton from 'material-ui/FlatButton';
@@ -9,12 +7,13 @@ import DatePicker from 'material-ui/DatePicker';
 import Dropzone from 'react-dropzone';
 import PetsService from '../services/PetsService';
 import * as actions from '../actions';
+import AddAPhoto from 'material-ui/svg-icons/image/add-a-photo';
 
-export class CreatePetForm extends React.Component {
+export default class CreatePetForm extends React.Component {
   constructor(props) {
     super(props);
 
-    this.petsService = new PetsService({ idToken: this.props.idToken });
+    this.petsService = new PetsService({ idToken: this.props.auth.getToken() });
 
     this.state = {
       files: [],
@@ -138,7 +137,7 @@ export class CreatePetForm extends React.Component {
       }
     };
 
-    let dropzoneInnerContent = "Drop animal photo here, or click to select a photo to upload.";
+    let dropzoneInnerContent = <div><AddAPhoto /><div>Drop animal photo here, or click to select a photo to upload.</div></div>;
 
     if (this.state.files && this.state.files.length > 0) {
       dropzoneInnerContent = this.state.files.map(
@@ -161,7 +160,10 @@ export class CreatePetForm extends React.Component {
             errorText={this.state.formErrors.name}
           />
           <br />
-          <DatePicker id="birthday" name="birthday" floatingLabelText="Birthday" ref={(datePicker) => { this.birthday = datePicker; }} />
+          <DatePicker 
+            id="birthday" name="birthday" floatingLabelText="Birthday" 
+            autoOk={true}
+            ref={(datePicker) => { this.birthday = datePicker; }} />
           <br />
           <RadioButtonGroup id="type" name="type"
             defaultSelected="unknown"
@@ -199,9 +201,3 @@ export class CreatePetForm extends React.Component {
       </form>);
   }
 }
-
-export default connect(
-  (store) => ({
-    idToken: store.idTokenState
-  })
-)(CreatePetForm)

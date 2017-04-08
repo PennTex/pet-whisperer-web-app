@@ -10,12 +10,13 @@ import CreatePetForm from './CreatePetForm';
 import PetsService from '../services/PetsService';
 import * as actions from '../actions';
 import Notification from './Notification';
+import Add from 'material-ui/svg-icons/content/add';
 
 export class Dashboard extends React.Component {
   constructor(props) {
     super(props);
 
-    this.petsService = new PetsService({idToken: props.idToken});
+    this.petsService = new PetsService({ idToken: this.props.auth.getToken() });
 
     this.state = {
       createPetModalOpen: false
@@ -23,16 +24,13 @@ export class Dashboard extends React.Component {
   }
 
   componentDidMount() {
-    this.props.lock.getProfile(this.props.idToken, function (err, profile) {
-      if (err) {
-        console.log("Error loading the Profile", err);
-      }
-      store.dispatch(actions.getProfileSuccess(profile));
-    }.bind(this));
+    this._getPets();
+  }
 
+  _getPets() {
     this.petsService.getPets()
       .then(pets => {
-        if (pets){
+        if (pets) {
           store.dispatch(actions.getPetsSuccess(pets));
         }
       });
@@ -51,60 +49,54 @@ export class Dashboard extends React.Component {
   }
 
   render() {
-    if (this.props.profile) {
-      let petsDisplay = '';
+    let petsDisplay = '';
 
-      if (this.props.pets.length > 0) {
-        petsDisplay = this.props.pets.map((pet, i) => {
-          return <div key={pet.id}><Pet key={pet.id} pet={pet} idToken={this.props.idToken} /> <br /></div>
-        })
-      } else {
-        petsDisplay = (<h2 style={{ textAlign: "center" }}>Add some pets!</h2>)
-      }
-
-      return (
-        <div>
-          <Nav lock={this.props.lock}></Nav>
-          <div className="col-lg-12">
-            <div className="row">
-              <FlatButton
-                href="#"
-                label="New Pet"
-                secondary={true}
-                icon={<FontIcon className="fa fa-plus-square" />}
-                data-toggle="modal" data-target="#createPetModal"
-                style={{ float: "right", margin: 20 }}
-                onClick={this._openCreatPetModal.bind(this)}
-              />
-
-              <div style={{ clear: "both" }}></div>
-
-              {petsDisplay}
-            </div>
-
-            <Dialog
-              title="Add Pet"
-              modal={false}
-              open={this.state.createPetModalOpen}
-              onRequestClose={this._closeCreatPetModal.bind(this)}
-              autoScrollBodyContent={true}
-            >
-              <CreatePetForm afterSuccess={this._closeCreatPetModal.bind(this)}/>
-            </Dialog>
-
-            <Notification />
-          </div>
-        </div>);
+    if (this.props.pets.length > 0) {
+      petsDisplay = this.props.pets.map((pet, i) => {
+        return <div key={pet.id}><Pet key={pet.id} pet={pet} idToken={this.props.idToken} auth={this.props.auth} /> <br /></div>
+      })
     } else {
-      return (<div>Loading...</div>);
+      petsDisplay = (<h2 style={{ textAlign: "center" }}>Add some pets!</h2>)
     }
+
+    return (
+      <div>
+        <Nav auth={this.props.auth}></Nav>
+        <div className="col-lg-12">
+          <div className="row">
+            <FlatButton
+              href="#"
+              label="New Pet"
+              secondary={true}
+              icon={<Add />}
+              data-toggle="modal" data-target="#createPetModal"
+              style={{ float: "right", margin: 20 }}
+              onClick={this._openCreatPetModal.bind(this)}
+            />
+
+            <div style={{ clear: "both" }}></div>
+
+            <div style={{maxWidth: 700, margin: 'auto'}}>{petsDisplay}</div>
+          </div>
+
+          <Dialog
+            title="Add Pet"
+            modal={false}
+            open={this.state.createPetModalOpen}
+            onRequestClose={this._closeCreatPetModal.bind(this)}
+            autoScrollBodyContent={true}
+          >
+            <CreatePetForm afterSuccess={this._closeCreatPetModal.bind(this)} auth={this.props.auth} />
+          </Dialog>
+
+          <Notification />
+        </div>
+      </div>);
   }
 }
 
 export default connect(
   (store) => ({
-    pets: store.petsState,
-    profile: store.profileState,
-    idToken: store.idTokenState
+    pets: store.petsState
   })
 )(Dashboard)
