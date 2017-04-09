@@ -13,14 +13,12 @@ export default class App extends React.Component {
     };
 
     this.auth.on('logged_in', () => {
-      console.log('logged in', this.auth.loggedIn());
       this.setState({
         isLoggedIn: this.auth.loggedIn()
       });
     });
 
     this.auth.on('logged_out', () => {
-      console.log('logged out', this.auth.loggedIn());
       this.setState({
         isLoggedIn: this.auth.loggedIn()
       });

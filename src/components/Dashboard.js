@@ -85,9 +85,8 @@ export class Dashboard extends React.Component {
           <div className="row" style={{ maxWidth: 700, margin: 'auto' }}>
             <FlatButton
               href="#"
-              label="New Pet"
+              label="Add New Pet"
               secondary={true}
-              icon={<AddBox />}
               data-toggle="modal" data-target="#createPetModal"
               style={{ float: "right", margin: 20 }}
               onClick={this._openCreatPetModal.bind(this)}

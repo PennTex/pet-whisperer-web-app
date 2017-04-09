@@ -203,10 +203,8 @@ export class Pet extends React.Component {
 
           <CardActions>
             <FlatButton label="Feed"
-              icon={<Restaurant style={{ fill: '#81C784' }} />}
               onTouchTap={this._openFeedPetModal.bind(this)} />
             <FlatButton label="Medication"
-              icon={<Healing style={{ fill: '#E57373' }} />}
               onTouchTap={this._openMedicatePetModal.bind(this)} />
             <FlatButton
               style={{ float: "right" }}

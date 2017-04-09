@@ -8,26 +8,38 @@ import TimePicker from 'material-ui/TimePicker';
 import Dropzone from 'react-dropzone';
 import PetsService from '../services/PetsService';
 import * as actions from '../actions';
+import { dateTimeMerge } from '../helpers/dateHelper';
 
 export default class FeedPetForm extends React.Component {
   constructor(props) {
     super(props);
 
     this.petsService = new PetsService({ idToken: this.props.auth.getToken() });
+    this.time = this.date = new Date();
 
-    this.state = {}
+    this.state = {};
+  }
+
+  _handleDateChange(event, date) {
+    this.date = date;
+  }
+
+  _handleTimeChange(event, date) {
+    this.time = date;
   }
 
   _submit(event) {
     event.preventDefault();
 
+    const date = dateTimeMerge(this.date, this.time);
+
     const type = 'feed',
-      date = this.date.getDate(),
-      time = this.time.state.time,
-      note = this.note.getValue()
+      at = Math.round(date.getTime() / 1000),
+      note = this.note.getValue();
 
     this.petsService.createPetActivity(this.props.pet.id, {
       type,
+      at,
       note
     }).then((activity) => {
       store.dispatch(actions.showNotification(`Activity for ${this.props.pet.name} successfully added.`))
@@ -36,8 +48,8 @@ export default class FeedPetForm extends React.Component {
   }
 
   render() {
+    this.time = this.date = new Date();
     const styles = {};
-    const defaultDate = new Date();
 
     return (
       <form onSubmit={this._submit.bind(this)}>
@@ -45,15 +57,15 @@ export default class FeedPetForm extends React.Component {
           <DatePicker
             floatingLabelText="Date"
             autoOk={true}
-            defaultDate={defaultDate}
-            ref={(datePicker) => { this.date = datePicker; }}
+            defaultDate={this.date}
+            onChange={this._handleDateChange.bind(this)}
           />
           <br />
           <TimePicker
             floatingLabelText="Time"
             autoOk={true}
-            defaultTime={defaultDate}
-            ref={(timePicker) => { this.time = timePicker; }}
+            defaultTime={this.time}
+            onChange={this._handleTimeChange.bind(this)}
           />
           <br />
           <TextField

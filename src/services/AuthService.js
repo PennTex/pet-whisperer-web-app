@@ -38,7 +38,6 @@ export default class AuthService extends EventEmitter {
   logout() {
     localStorage.removeItem('id_token');
     localStorage.removeItem('profile');
-    console.log('emitting logout', this.loggedIn())
     this.emit('logged_out');
   }
 

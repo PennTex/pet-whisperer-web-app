@@ -34,10 +34,8 @@ export default class CreatePetForm extends React.Component {
 
     const name = this.name.getValue(),
       type = this.type.getSelectedValue(),
-      birthday = this.birthday.getDate(),
+      birthday = Math.round(this.birthday.getDate().getTime() / 1000),
       image_url = this.state.uploadedImageUrl;
-
-      console.log('birthday', Math.round(birthday.getTime() / 1000));
 
     if (!name) {
       formErrors.name = 'Name is required.';
@@ -100,8 +98,6 @@ export default class CreatePetForm extends React.Component {
             break;
           }
         }
-
-        console.log('upload data: ', JSON.stringify(data, null, 4));
 
         const petInfoByImage = determinedPetType ? `Looks like a ${determinedPetType}! We prefilled some form data for you.` : 'Are you sure you uploaded a picture of a Dog, Cat, or Bird?';
 
@@ -172,6 +168,7 @@ export default class CreatePetForm extends React.Component {
             ref={(datePicker) => { this.birthday = datePicker; }} />
           <br />
           <RadioButtonGroup
+            name="type"
             defaultSelected="unknown"
             ref={(radio) => { this.type = radio; }}>
             <RadioButton

@@ -46,7 +46,8 @@ export default class PetsService {
     return rp(options);
   }
 
-  createPetActivity(petId, activity) {
+  createPetActivity(petId, activity) {    
+    console.log('activity', activity);
     var options = {
       method: "POST",
       uri: `${config.PET_WHISPERER_API_BASE}/pets/${petId}/activities`,
