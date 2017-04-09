@@ -77,11 +77,6 @@ export default class PetsService {
     return rp(options)
       .then(response => {
         let activities = response.data || [];
-
-        activities.sort(function (a, b) {
-          return b.created_at - a.created_at;
-        });
-
         return Promise.resolve(activities);
       });;
   }

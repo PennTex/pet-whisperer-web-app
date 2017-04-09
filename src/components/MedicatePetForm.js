@@ -59,6 +59,7 @@ export default class MedicatePetForm extends React.Component {
             floatingLabelText="Date"
             autoOk={true}
             defaultDate={this.date}
+            maxDate={this.date}
             onChange={this._handleDateChange.bind(this)}
           />
           <br />

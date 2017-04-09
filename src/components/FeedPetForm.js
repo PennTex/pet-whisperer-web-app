@@ -58,6 +58,7 @@ export default class FeedPetForm extends React.Component {
             floatingLabelText="Date"
             autoOk={true}
             defaultDate={this.date}
+            maxDate={this.date}
             onChange={this._handleDateChange.bind(this)}
           />
           <br />

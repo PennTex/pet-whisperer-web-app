@@ -17,6 +17,7 @@ import Restaurant from 'material-ui/svg-icons/maps/restaurant';
 import Healing from 'material-ui/svg-icons/image/healing';
 import ActionInfo from 'material-ui/svg-icons/action/info';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
+import moment from 'moment';
 
 export class Pet extends React.Component {
   constructor(props) {
@@ -38,6 +39,16 @@ export class Pet extends React.Component {
     this._getActivities();
   }
 
+  _sortActivities(theActivities) {
+    let activities = theActivities.concat();
+
+    activities.sort(function (a, b) {
+      return b.at - a.at;
+    });
+
+    return activities;
+  }
+
   _getActivities() {
     this.setState({
       loadingActivities: true
@@ -46,7 +57,7 @@ export class Pet extends React.Component {
     return this.petsService.getPetActivities(this.props.pet.id)
       .then((activities) => {
         this.setState({
-          activities
+          activities: this._sortActivities(activities)
         });
       }).finally(() => {
         this.setState({
@@ -116,7 +127,9 @@ export class Pet extends React.Component {
     this._closeMedicatePetModal();
 
     let activities = this.state.activities.concat();
-    activities.unshift(activity);
+    
+    activities.push(activity);
+    activities = this._sortActivities(activities);
 
     this.setState({
       activities
@@ -150,6 +163,7 @@ export class Pet extends React.Component {
 
     if (this.state.activities.length > 0) {
       activities = this.state.activities.map((activity, i) => {
+        const activityDisplayTime = moment(new Date(activity.at * 1000)).calendar();
         let activityIcon = <span />;
 
         if (activity.type === 'feed') {
@@ -163,7 +177,7 @@ export class Pet extends React.Component {
           leftAvatar={activityIcon}
           rightIcon={<ActionInfo />}
           primaryText={activity.note ? activity.note : ''}
-          secondaryText="Apr 7, 2017"
+          secondaryText={activityDisplayTime}
           onTouchTap={() => this._openActivityInfoModal(activity)}
         />)
       })

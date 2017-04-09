@@ -165,6 +165,7 @@ export default class CreatePetForm extends React.Component {
             floatingLabelText="Birthday" 
             autoOk={true}
             defaultDate={defaultDate}
+            maxDate={defaultDate}
             ref={(datePicker) => { this.birthday = datePicker; }} />
           <br />
           <RadioButtonGroup
