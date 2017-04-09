@@ -81,7 +81,7 @@ export class Dashboard extends React.Component {
     return (
       <div>
         <Nav auth={this.props.auth}></Nav>
-        <div className="col-lg-12">
+        <div style={{marginLeft: 10, marginRight: 10}}>
           <div className="row" style={{ maxWidth: 700, margin: 'auto' }}>
             <FlatButton
               href="#"
