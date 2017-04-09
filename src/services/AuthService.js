@@ -30,9 +30,7 @@ export default class AuthService extends EventEmitter {
   }
 
   login() {
-    this.lock.show({
-      closable: false
-    });
+    this.lock.show();
   }
 
   logout() {
