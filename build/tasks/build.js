@@ -21,15 +21,22 @@ gulp.task('build:transform', function (done) {
     })
     .bundle()
     .pipe(source('all.js'))
-    .pipe(gulp.dest(paths.output))
+    .pipe(gulp.dest(paths.output + "/assets/js"))
     .pipe(rename('all.min.js'))
     .pipe(streamify(concat('all.min.js')))
     .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest(paths.output + "/assets/js"));
+});
+
+gulp.task('build:copy', ['build:copy:html', 'build:copy:images']);
+
+gulp.task('build:copy:html', function () {
+  gulp.src(paths.html)
     .pipe(gulp.dest(paths.output));
 });
 
-gulp.task('build:copy', function () {
-  gulp.src(paths.html)
+gulp.task('build:copy:images', function () {
+  gulp.src(paths.images)
     .pipe(gulp.dest(paths.output));
 });
 

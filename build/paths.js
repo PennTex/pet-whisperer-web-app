@@ -7,6 +7,9 @@ module.exports = {
 	html: [
 		appRoot + "**/*.html"
 	],
+	images: [
+		appRoot + "**/*.png"
+	],
   app: appRoot + "main.js",
   output: outputRoot
 }
