@@ -1,7 +1,8 @@
 import { EventEmitter } from 'events'
 import Auth0Lock from 'auth0-lock';
 import { isTokenExpired } from '../helpers/jwtHelper';
-import cookies from 'js-cookie'
+import cookies from 'js-cookie';
+import * as config from '../config';
 
 export default class AuthService extends EventEmitter {
   constructor(clientId, domain) {
@@ -50,7 +51,7 @@ export default class AuthService extends EventEmitter {
   setProfile(profile) {
     cookies.set('profile', JSON.stringify(profile), {
       expires: 7,
-      domain: window.location.hostname
+      domain: config.COOKIE_DOMAIN
     });
     this.emit('profile_updated', profile);
   }
@@ -58,7 +59,7 @@ export default class AuthService extends EventEmitter {
   setToken(idToken) {
     cookies.set('id_token', idToken, {
       expires: 7,
-      domain: window.location.hostname
+      domain: config.COOKIE_DOMAIN
     });
 
     this.lock.hide();
