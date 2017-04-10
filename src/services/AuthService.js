@@ -48,12 +48,19 @@ export default class AuthService extends EventEmitter {
   }
 
   setProfile(profile) {
-    cookies.set('profile', JSON.stringify(profile), {expires: 7});
+    cookies.set('profile', JSON.stringify(profile), {
+      expires: 7,
+      domain: window.location.hostname
+    });
     this.emit('profile_updated', profile);
   }
 
   setToken(idToken) {
-    cookies.set('id_token', idToken, {expires: 7});
+    cookies.set('id_token', idToken, {
+      expires: 7,
+      domain: window.location.hostname
+    });
+
     this.lock.hide();
     this.emit('logged_in', idToken);
   }
