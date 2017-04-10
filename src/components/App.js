@@ -22,6 +22,8 @@ export default class App extends React.Component {
       this.setState({
         isLoggedIn: this.auth.loggedIn()
       });
+
+      window.location.replace('https://www.petwhisperer.co');
     });
   }
 
