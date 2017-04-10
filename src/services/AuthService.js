@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events'
 import Auth0Lock from 'auth0-lock';
 import { isTokenExpired } from '../helpers/jwtHelper';
+import cookies from 'js-cookie'
 
 export default class AuthService extends EventEmitter {
   constructor(clientId, domain) {
@@ -12,7 +13,9 @@ export default class AuthService extends EventEmitter {
         title: "Pet Whisperer"
       }
     });
+
     this.lock.on('authenticated', this._doAuthentication.bind(this));
+
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
   }
@@ -34,29 +37,28 @@ export default class AuthService extends EventEmitter {
   }
 
   logout() {
-    localStorage.removeItem('id_token');
-    localStorage.removeItem('profile');
+    cookies.remove('id_token');
+    cookies.remove('profile');
     this.emit('logged_out');
   }
 
   loggedIn() {
-    // Checks if there is a saved token and it's still valid
     const token = this.getToken();
     return !!token && !isTokenExpired(token);
   }
 
   setProfile(profile) {
-    localStorage.setItem('profile', JSON.stringify(profile));
+    cookies.set('profile', JSON.stringify(profile));
     this.emit('profile_updated', profile);
   }
 
   setToken(idToken) {
-    localStorage.setItem('id_token', idToken);
+    cookies.set('id_token', idToken);
     this.lock.hide();
     this.emit('logged_in', idToken);
   }
 
   getToken() {
-    return localStorage.getItem('id_token');
+    return cookies.get('id_token');
   }
 }
