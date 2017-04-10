@@ -38,8 +38,12 @@ export default class AuthService extends EventEmitter {
   }
 
   logout() {
-    cookies.remove('id_token');
-    cookies.remove('profile');
+    cookies.remove('id_token', {
+      domain: config.COOKIE_DOMAIN
+    });
+    cookies.remove('profile', {
+      domain: config.COOKIE_DOMAIN
+    });
     this.emit('logged_out');
   }
 
