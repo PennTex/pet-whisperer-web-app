@@ -36,6 +36,7 @@ export default class AuthService extends EventEmitter {
   logout() {
     localStorage.removeItem('id_token');
     localStorage.removeItem('profile');
+    window.location.replace('https://www.petwhisperer.co');
     this.emit('logged_out');
   }
 
