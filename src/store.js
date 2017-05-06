@@ -1,14 +1,16 @@
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import petsReducer from './reducers/pets';
 import profileReducer from './reducers/profile';
-import idTokenReducer from './reducers/token';
-import notificationReducer from './reducers/notification';
+import authReducer from './reducers/auth';
 
 const reducers = combineReducers({
-  notification: notificationReducer,
-  petsState: petsReducer,
-  profileState: profileReducer,
-  idTokenState: idTokenReducer
+  pets: petsReducer,
+  profile: profileReducer,
+  auth: authReducer
 });
 
-export default createStore(reducers);
+export default createStore(
+  reducers,
+  applyMiddleware(thunk)
+);

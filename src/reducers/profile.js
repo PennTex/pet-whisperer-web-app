@@ -1,6 +1,6 @@
-const initialProfileState = {};
+import initialState from './initial';
 
-const profileReducer = function (state = initialProfileState, action) {
+const profileReducer = function (state = initialState.profile, action) {
   switch (action.type) {
     case 'GET_PROFILE_SUCCESS':
       return Object.assign({}, state, action.profile);

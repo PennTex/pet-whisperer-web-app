@@ -1,14 +1,15 @@
-const initialPetsState = [];
+import initialState from './initial';
+import * as types from '../actions/actionTypes';
 
-const petsReducer = function (state = initialPetsState, action) {
+const petsReducer = function (state = initialState.pets, action) {
   switch (action.type) {
-    case 'DELETE_PET_SUCCESS':
+    case types.DELETE_PET_SUCCESS:
       return state.filter(item => {
         return item.id !== action.petID;
       });      
-    case 'ADD_PET_SUCCESS':
+    case types.ADD_PET_SUCCESS:
       return state.concat([action.pet]);
-    case 'GET_PETS_SUCCESS':
+    case types.GET_PETS_SUCCESS:
       return [].concat(action.pets);
   }
 

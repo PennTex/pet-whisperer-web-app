@@ -46,7 +46,7 @@ export default class PetsService {
     return rp(options);
   }
 
-  createPetActivity(petId, activity) {    
+  createPetActivity(petId, activity) {
     console.log('activity', activity);
     var options = {
       method: "POST",

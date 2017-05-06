@@ -1,14 +1,14 @@
 import React from 'react';
-import store from '../store';
+import store from '../../store';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import DatePicker from 'material-ui/DatePicker';
 import TimePicker from 'material-ui/TimePicker';
 import Dropzone from 'react-dropzone';
-import PetsService from '../services/PetsService';
-import * as actions from '../actions';
-import { dateTimeMerge } from '../helpers/dateHelper';
+import PetsService from '../../services/PetsService';
+import * as actions from '../../actions';
+import { dateTimeMerge } from '../../helpers/dateHelper';
 
 export default class FeedPetForm extends React.Component {
   constructor(props) {

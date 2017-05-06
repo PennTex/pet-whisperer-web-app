@@ -1,37 +1,25 @@
 import React from 'react';
-import Login from './Login';
-import Dashboard from './Dashboard';
-import * as config from '../config';
-import AuthService from '../services/AuthService';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import LoginPage from './Login/LoginPage';
+import DashboardPage from './Dashboard/DashboardPage';
 
-export default class App extends React.Component {
-  componentWillMount() {
-    this.auth = new AuthService(config.AUTH0_CLIENT_ID, config.AUTH0_DOMAIN, {});
-
-    this.state = {
-      isLoggedIn: this.auth.loggedIn()
-    };
-
-    this.auth.on('logged_in', () => {
-      this.setState({
-        isLoggedIn: this.auth.loggedIn()
-      });
-    });
-
-    this.auth.on('logged_out', () => {
-      this.setState({
-        isLoggedIn: this.auth.loggedIn()
-      });
-
-      window.location.replace('https://www.petwhisperer.co');
-    });
-  }
-
-  render() {
-    if (this.state.isLoggedIn) {
-      return (<Dashboard auth={this.auth} />);
-    } else {
-      return (<Login auth={this.auth} />);
-    }
+const App = ({ isLoggedIn }) => {
+  if (isLoggedIn) {
+    return (<DashboardPage />);
+  } else {
+    return (<LoginPage />);
   }
 }
+
+App.propTypes = {
+  isLoggedIn: PropTypes.bool.isRequired
+};
+
+function mapStateToProps(state) {
+  return {
+    isLoggedIn: state.auth.isLoggedIn
+  };
+}
+
+export default connect(mapStateToProps)(App);

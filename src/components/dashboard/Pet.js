@@ -1,15 +1,15 @@
 import React from 'react';
 import request from 'request';
 import { connect } from 'react-redux';
-import store from '../store';
+import store from '../../store';
 import { Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 import Toggle from 'material-ui/Toggle';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import PetsService from '../services/PetsService';
+import PetsService from '../../services/PetsService';
 import FeedPetForm from './FeedPetForm';
 import MedicatePetForm from './MedicatePetForm';
-import * as actions from '../actions';
+import * as actions from '../../actions';
 import { List, ListItem } from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';

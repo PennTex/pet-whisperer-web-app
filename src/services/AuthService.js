@@ -4,7 +4,7 @@ import { isTokenExpired } from '../helpers/jwtHelper';
 import cookies from 'js-cookie';
 import * as config from '../config';
 
-export default class AuthService extends EventEmitter {
+class AuthService extends EventEmitter {
   constructor(clientId, domain) {
     super();
 
@@ -22,13 +22,13 @@ export default class AuthService extends EventEmitter {
   }
 
   _doAuthentication(authResult) {
-    this.setToken(authResult.idToken);
+    this._setToken(authResult.idToken);
 
     this.lock.getProfile(authResult.idToken, (error, profile) => {
       if (error) {
         console.log('Error loading the Profile', error);
       } else {
-        this.setProfile(profile);
+        this._setProfile(profile);
       }
     })
   }
@@ -48,11 +48,11 @@ export default class AuthService extends EventEmitter {
   }
 
   loggedIn() {
-    const token = this.getToken();
+    const token = this._getToken();
     return !!token && !isTokenExpired(token);
   }
 
-  setProfile(profile) {
+  _setProfile(profile) {
     cookies.set('profile', JSON.stringify(profile), {
       expires: 7,
       domain: config.COOKIE_DOMAIN
@@ -60,7 +60,7 @@ export default class AuthService extends EventEmitter {
     this.emit('profile_updated', profile);
   }
 
-  setToken(idToken) {
+  _setToken(idToken) {
     cookies.set('id_token', idToken, {
       expires: 7,
       domain: config.COOKIE_DOMAIN
@@ -70,7 +70,10 @@ export default class AuthService extends EventEmitter {
     this.emit('logged_in', idToken);
   }
 
-  getToken() {
+  _getToken() {
     return cookies.get('id_token');
   }
 }
+
+let authService = new AuthService(config.AUTH0_CLIENT_ID, config.AUTH0_DOMAIN);
+export default authService

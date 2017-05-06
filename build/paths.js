@@ -10,6 +10,6 @@ module.exports = {
 	images: [
 		appRoot + "**/*.png"
 	],
-  app: appRoot + "main.js",
+  app: appRoot + "index.js",
   output: outputRoot
 }

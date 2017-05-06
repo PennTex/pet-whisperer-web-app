@@ -1,12 +1,12 @@
 import React from 'react';
-import store from '../store';
+import store from '../../store';
 import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import DatePicker from 'material-ui/DatePicker';
 import Dropzone from 'react-dropzone';
-import PetsService from '../services/PetsService';
-import * as actions from '../actions';
+import PetsService from '../../services/PetsService';
+import * as actions from '../../actions';
 import AddAPhoto from 'material-ui/svg-icons/image/add-a-photo';
 
 export default class CreatePetForm extends React.Component {
